@@ -31,7 +31,8 @@ def create_app() -> Flask:
     def force_connection():
         if 'login_status' in session:
             if session.get('login_status') == LoginStatus.CONNECTED.value:
-                return
+                if server.user_manager.users[session.get('login_uid')] != None:
+                    return
         
         session['login_status'] = LoginStatus.UNKNOWN.value
             
@@ -54,19 +55,25 @@ def create_app() -> Flask:
         force_connection()
         user_uid = session['login_uid']
         user: User = server.user_manager.users[user_uid]
-        print(server.games_manager.lobby_uids)
-        lobby: GamesManager.Lobby = list(filter(
-            lambda x:x.lobby_uid==lobby_uid, 
-            server.games_manager.lobby_uids
-            ))[0]
+        try:
+            lobby: GamesManager.Lobby = list(filter(
+                lambda x:x.lobby_uid==lobby_uid, 
+                server.games_manager.lobby_uids
+                ))[0]
+        except:
+            return "Error, lobby does not exist" # todo: make this actually good lookin
         
-        if not user_uid in lobby.whitelist:
-            # First tiem user has entered the lobby
+        if lobby.lobby_state == GamesManager.Lobby.LobbyState.RUNNING:
+            return "Error, lobby is full", 401
+        if not user_uid in lobby.players:
+            # First time user has entered the lobby
             if not user.current_lobby == lobby_uid:
                 # Second player
-                lobby.whitelist[1] = user_uid
+                lobby.players[1] = user_uid
                 user.current_lobby = lobby_uid
                 print("2nd player joined", user_uid)
+
+                lobby.lobby_state = GamesManager.Lobby.LobbyState.RUNNING
 
         else:
             print("1st player joined", user_uid)
@@ -77,9 +84,9 @@ def create_app() -> Flask:
 
     @app.route("/api/v1/debug", methods=["POST"]) 
     def api_debug():
-        print(session.get('login_status'))
-        print(session.get('login_uid'))
-        print(server.user_manager.users)
+        print("login_status", session.get('login_status'))
+        print("login_uid", session.get('login_uid'))
+        print("users", server.user_manager.users)
         return 'ok', 200
 
     @app.route("/api/v1/connect", methods=["POST"]) 
@@ -127,7 +134,7 @@ def create_app() -> Flask:
         lobby = server.start_lobby()
         print("Starting lobby")
         user.current_lobby = lobby.lobby_uid
-        lobby.whitelist[0] = user_uid
+        lobby.players[0] = user_uid
 
         return jsonify({'lobby_uid' : lobby.lobby_uid}), 200
 

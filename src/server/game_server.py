@@ -17,14 +17,14 @@ class GamesManager:
         lobby_state: LobbyState
         lobby_uid: str
         game_index: int
-        whitelist: list[Optional[int]]
+        players: list[Optional[int]]
 
         def __init__(self, state, uid, game_index) -> None:
             self.lobby_state = state
             self.lobby_uid = uid
             self.game_index = game_index
 
-            self.whitelist = [None, None]
+            self.players= [None, None]
 
     game_servers: list[Game]
     lobby_uids: list[Lobby]
