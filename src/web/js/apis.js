@@ -173,3 +173,120 @@ async function get_available_ships(){
     const data = await response.json();
     return data;
 }
+
+async function get_grid_size(){
+    try{
+        const response = await fetch('/api/v1/graphics_get_grid_size',{
+            method: 'POST',
+            headers:{}
+        });
+        if (!response.ok){
+            throw new Error('Error when getting grid size');
+        }
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+    const data = await response.json();
+    return data;
+}
+
+async function get_visible_friendly_ships(){
+    try{
+        const response = await fetch('/api/v1/graphics_get_visible_friendly_ships',{
+            method: 'POST',
+            headers:{}
+        });
+        if (!response.ok){
+            throw new Error('Error when getting visible friendly ships');
+        }
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+    const data = await response.json();
+    return data;
+}
+
+async function get_visible_enemy_ships(){
+    try{
+        const response = await fetch('/api/v1/graphics_get_visible_enemy_ships',{
+            method: 'POST',
+            headers:{}
+        });
+        if (!response.ok){
+            throw new Error('Error when getting visible enemy ships');
+        }
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+    const data = await response.json();
+    return data;
+}
+
+async function get_damaged_squares(){
+    try{
+        const response = await fetch('/api/v1/graphics_get_damaged_squares',{
+            method: 'POST',
+            headers:{}
+        });
+        if (!response.ok){
+            throw new Error('Error when getting damaged squares');
+        }
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+    const data = await response.json();
+    return data;
+}
+
+async function get_hidden_cells(){
+    try{
+        const response = await fetch('/api/v1/graphics_get_hidden_cells',{
+            method: 'POST',
+            headers:{}
+        });
+        if (!response.ok){
+            throw new Error('Error when getting hidden cells');
+        }
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+    const data = await response.json();
+    return data;
+}
+
+async function get_possible_attack(ship_index){
+    try{
+        const response = await fetch('/api/v1/graphics_get_possible_attack',{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ship_index: ship_index
+            })
+        });
+        if (!response.ok){
+            throw new Error('Error when getting possible attacks');
+        }
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+    const data = await response.json();
+    return data;
+}
+
+async function get_visible_cells(){
+    try{
+        const response = await fetch('/api/v1/graphics_get_visible_cells',{
+            method: 'POST',
+            headers:{}
+        });
+        if (!response.ok){
+            throw new Error('Error when getting visible cells');
+        }
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+    const data = await response.json();
+    return data;
+}
