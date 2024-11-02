@@ -1,8 +1,10 @@
 import numpy as np
 import ships
+import math
 
 ROT90 = np.array([[0, -1], [1, 0]])
 
+#Main class storing the board state, includes lots of methods
 class Board:
     def __init__(self, gridSize: np.array):
         self.gridSize = gridSize
@@ -75,6 +77,44 @@ class Board:
                     self.updateGrid(c, None)
             return (True, ind, ships[ind].isDead())
         return False
+    
+    def getDist(self, coord1: np.array, coord2: np.array) -> float:
+        diff = coord2 - coord1
+        return math.sqrt(diff[0] ** 2 + diff[1] ** 2)
+
+    def getVisibleTiles(self, index: int) -> tuple[list[np.array], list[np.array]]:
+        ship = self.ships[index]
+        centre = ship.getCentre()
+        visibleTiles = []
+        invisibleTiles = []
+        for y in range(self.gridSize[1]):
+            for x in range(self.gridSize[0]):
+                arr = np.array([x, y])
+                if self.getDist(arr, centre) <= ship.viewRadius:
+                    visibleTiles.append(arr)
+                else:
+                    invisibleTiles.append(arr)
+        return visibleTiles, invisibleTiles
+
+    def getVisibleEnemyShips(self, index: int):
+        ship = self.ships[index]
+        centre = ship.getCentre()
+        visible = []
+        for i in range(len(self.ships)):
+            if ship.team == self.ships[i].team:
+                continue
+            coords = self.ships[i].getCoords()
+            for coord in coords:
+                if self.getDist(coord, centre) <= ship.viewRadius:
+                    visible.append(i)
+                    break
+        return visible
+
+
+    def getVisibleTilesTuple(self, index: int) -> tuple[map[tuple[int, int]], map[tuple[int, int]]]:
+        visibleTiles, invisibleTiles = self.getVisibleTiles(index)
+        return map(tuple, visibleTiles), map(tuple, invisibleTiles)
+
 
 class Game:
     def __init__(self):
