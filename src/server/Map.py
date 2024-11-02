@@ -78,6 +78,14 @@ class Board:
             return (True, ind, ships[ind].isDead())
         return False
     
+    def shootFromShip(self, index: int, coord: np.array):
+        ship = self.ships[index]
+        radius = ship.fireRadius
+        centre = ship.getCentre()
+        if self.getDist(centre, coord) <= radius:
+            return self.shoot(coord)
+        raise ValueError("This ship cannot shoot that far.")
+    
     def getDist(self, coord1: np.array, coord2: np.array) -> float:
         diff = coord2 - coord1
         return math.sqrt(diff[0] ** 2 + diff[1] ** 2)
@@ -96,7 +104,7 @@ class Board:
                     invisibleTiles.append(arr)
         return visibleTiles, invisibleTiles
 
-    def getVisibleEnemyShips(self, index: int):
+    def getVisibleEnemyShips(self, index: int) -> list[int]:
         ship = self.ships[index]
         centre = ship.getCentre()
         visible = []
@@ -109,7 +117,13 @@ class Board:
                     visible.append(i)
                     break
         return visible
-
+    
+    def getVisibleFriendlyShips(self, team: int) -> list[int]:
+        visible = []
+        for i in range(self.ships):
+            if self.ships[i].team == team and not self.ships[i].isDead():
+                visible.append(i)
+        return visible
 
     def getVisibleTilesTuple(self, index: int) -> tuple[map[tuple[int, int]], map[tuple[int, int]]]:
         visibleTiles, invisibleTiles = self.getVisibleTiles(index)
