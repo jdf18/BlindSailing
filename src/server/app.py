@@ -269,7 +269,7 @@ def create_app() -> Flask:
 
         return jsonify({'is_winner': is_player_winner}), 200 
     
-    @app.route("/api/v1/get_availiable_ships", methods=["POST"])
+    @app.route("/api/v1/game_get_availiable_ships", methods=["POST"])
     def api_game_get_availiable_ships():
         require_connection()
         user_uid = session['login_uid']
@@ -279,13 +279,145 @@ def create_app() -> Flask:
             server.games_manager.lobby_uids
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
-        
+
         availiable_ships: list = []
 
         # todo
 
         return jsonify(availiable_ships), 200 
     
+    @app.route("/api/v1/graphics_get_grid_size", methods=["POST"])
+    def api_graphics_get_grid_size():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+        
+        grid_size: list = []
+
+        # todo
+
+        return jsonify(grid_size), 200 
+    
+    @app.route("/api/v1/graphics_get_visible_friendly_ships", methods=["POST"])
+    def api_get_visible_friendly_ships():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+        
+        visible_friendly_ships: list[dict[
+            'filename':str,
+            'position':tuple[int, int],
+            'facing':int]] = []
+
+        # todo
+
+        return jsonify(visible_friendly_ships), 200 
+    
+    @app.route("/api/v1/graphics_get_visible_enemy_ships", methods=["POST"])
+    def api_get_visible_enemy_ships():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+        
+        visible_enemy_ships: list[dict[
+            'filename':str,
+            'position':tuple[int, int],
+            'facing':int]] = []
+
+        # todo
+
+        return jsonify(visible_enemy_ships), 200 
+    
+    @app.route("/api/v1/graphics_get_damaged_squares", methods=["POST"])
+    def api_get_damaged_squares():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+        
+        damaged_squares: list[tuple[int, int]] = []
+
+        # todo
+
+        return jsonify(damaged_squares), 200 
+    
+    @app.route("/api/v1/graphics_get_hidden_cells", methods=["POST"])
+    def api_get_hidden_cells():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+        
+        hidden_cells: list[tuple[int, int]] = []
+
+        # todo
+
+        return jsonify(hidden_cells), 200 
+    
+    @app.route("/api/v1/graphics_get_visible_cells", methods=["POST"])
+    def api_get_visible_cells():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+        
+        visible_cells: list[tuple[int, int]] = []
+
+        # todo
+
+        return jsonify(visible_cells), 200 
+    
+    @app.route("/api/v1/graphics_get_possible_attacks", methods=["POST"])
+    def api_get_possible_attacks():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+        
+        possible_attacks: list[tuple[int, int]] = []
+
+        if not request.is_json:
+            return 'None', 400
+        success: bool = False
+
+        data: dict[
+            'ship_index': int
+            ] = request.get_json()
+
+        # todo
+
+        return jsonify(possible_attacks), 200 
 
 
     
