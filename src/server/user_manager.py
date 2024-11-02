@@ -6,8 +6,9 @@ class LoginStatus(Enum):
     CONNECTED = 1
 
 class User:
+    current_lobby: str
     def __init__(self):
-        pass
+        self.current_lobby = None
 
 class UserManager:
     def __init__(self, max_users: int = 64):
@@ -29,6 +30,7 @@ class UserManager:
             new_uid = self.find_unused_uid()
             self.users[new_uid] = User()
             self.current_users += 1
+            print("user", new_uid, "connected")
             return new_uid
         return -1
 
@@ -36,5 +38,6 @@ class UserManager:
         if self.users[user_id] != None:
             self.users[user_id] = None
             self.current_users -= 1
+            print("user", user_id, "disconnected")
             return True
         return False
