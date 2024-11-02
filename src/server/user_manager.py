@@ -6,8 +6,9 @@ class LoginStatus(Enum):
     CONNECTED = 1
 
 class User:
+    current_lobby: str
     def __init__(self):
-        pass
+        self.current_lobby = None
 
 class UserManager:
     def __init__(self, max_users: int = 64):

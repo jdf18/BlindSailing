@@ -2,7 +2,7 @@ from os import path
 from flask import Flask, abort, jsonify, render_template, request, redirect, send_file, url_for, session
 
 from user_manager import UserManager, User, LoginStatus
-from server import Server
+from game_server import GamesServer, GamesManager
 
 
 def create_app() -> Flask:
@@ -14,7 +14,17 @@ def create_app() -> Flask:
 
     app.secret_key = 'password'
 
-    server = Server()
+    server = GamesServer()
+    
+    # Returns a 401 error if the user has not been connected yet
+    def require_connection():
+        if 'login_status' in session:
+            if server.user_manager.users[session.get('login_uid')] == None:
+                abort(401)
+            if session.get('login_status') == LoginStatus.CONNECTED:
+                return
+        abort(401)
+
 
     @app.route("/", methods=["GET"])
     def render_html_index():
@@ -29,6 +39,13 @@ def create_app() -> Flask:
         if not 'login_status' in session:
             session['login_status'] = LoginStatus.UNKNOWN.value
         
+        if session.get('login_status') == LoginStatus.CONNECTED.value:
+            if server.user_manager.users[session.get('login_uid')] == None:
+                session['login_status'] = LoginStatus.UNKNOWN.value
+            else:
+                pass
+            return jsonify('Already connected'), 400 
+        
         if session.get('login_status') == LoginStatus.UNKNOWN.value:
             uid = server.user_manager.connect()
             if uid == -1:
@@ -37,9 +54,6 @@ def create_app() -> Flask:
             session['login_status'] = LoginStatus.CONNECTED.value
             session['login_uid'] = uid
             return 'User connected', 200
-        
-        elif session.get('login_status') == LoginStatus.CONNECTED.value:
-            return 'Already connected', 400 
 
     @app.route("/api/v1/disconnect", methods=["POST"]) 
     def api_disconnect():
