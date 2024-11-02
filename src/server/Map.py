@@ -120,10 +120,25 @@ class Board:
     
     def getVisibleFriendlyShips(self, team: int) -> list[int]:
         visible = []
-        for i in range(self.ships):
+        for i in range(len(self.ships)):
             if self.ships[i].team == team and not self.ships[i].isDead():
                 visible.append(i)
         return visible
+    
+    def getInvisibleEnemyShips(self, index: int) -> list[int]:
+        ship = self.ships[index]
+        centre = ship.getCentre()
+        invisible = []
+        for i in range(len(self.ships)):
+            if ship.team == self.ships[i].team:
+                continue
+            coords = self.ships[i].getCoords()
+            for coord in coords:
+                if self.getDist(coord, centre) > ship.viewRadius:
+                    invisible.append(i)
+                    break
+        return invisible
+
 
     def getVisibleTilesTuple(self, index: int) -> tuple[map[tuple[int, int]], map[tuple[int, int]]]:
         visibleTiles, invisibleTiles = self.getVisibleTiles(index)
@@ -152,4 +167,25 @@ class Game:
     def rotateShip(self, index: int, times: int):
         self.board.rotateShip(index, times)
     def shoot(self, coord):
-        self.board.shoot(coord)
+        return self.board.shoot(coord)
+    def shootFromShip(self, index: int, coord: np.array):
+        return self.board.shootFromShip(index, coord)
+    def getVisibleTiles(self, index: int) -> tuple[list[np.array], list[np.array]]:
+        return self.board.getVisibleTiles(index)
+    def getVisibleEnemyShips(self, index: int) -> list[int]:
+        return self.board.getVisibleEnemyShips(index)
+    def getVisibleFriendlyShips(self, team: int) -> list[int]:
+        return self.board.getVisibleFriendlyShips(team)
+    def getVisibleTilesTuple(self, index: int) -> tuple[map[tuple[int, int]], map[tuple[int, int]]]:
+        return self.board.getVisibleTilesTuple(index)
+    
+    def hasWon(self, team):
+        if team == 1:
+            for ship in self.p2Ships:
+                if not ship.isDead():
+                    return False
+        elif team == 2:
+            for ship in self.p1Ships:
+                if not ship.isDead():
+                    return False
+        return True
