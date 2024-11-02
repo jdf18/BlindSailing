@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+    gap: 2px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.grid div {
+    width: 30px;
+    height: 30px;
+    background-color: lightblue;
+    border: 1px solid skyblue;
+}
+
+#player-board div {
+    background-color: lightcoral;
+}
+
+#opponent-board div {
+    cursor: pointer;
+}
+
+#opponent-board div:hover {
+    background-color: lightgreen;
+}
+
+footer {
+    margin-top: 40px;
+}
