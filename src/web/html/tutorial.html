@@ -4,9 +4,80 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Battleships - How to Play</title>
 </head>
 <body>
-    <h1>How to play</h>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="index.html">Battleships</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tutorial.html">How to Play</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container mt-5">
+        <h1 class="text-center">How to Play Battleship</h1>
+        
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2>1. Objective</h2>
+                <p>The goal of Battleship is to sink all of your opponent’s ships before they sink yours. Each player places ships strategically and takes turns guessing the opponent’s ship locations.</p>
+                
+                <h2>2. Game Setup</h2>
+                <ul>
+                    <li><strong>Ship Placement</strong>: Each player places five ships on their 10x10 grid:</li>
+                    <ul>
+                        <li>Carrier - 5 cells</li>
+                        <li>Battleship - 4 cells</li>
+                        <li>Cruiser - 3 cells</li>
+                        <li>Submarine - 3 cells</li>
+                        <li>Destroyer - 2 cells</li>
+                    </ul>
+                    <li><strong>Rules</strong>:
+                        <ul>
+                            <li>Ships can be placed horizontally or vertically (not diagonally).</li>
+                            <li>Ships cannot overlap each other.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h2>3. Taking Turns</h2>
+                <ol>
+                    <li><strong>Guessing</strong>: On your turn, choose a cell on the opponent’s grid to attack. For example, say "B4" to attack that cell.</li>
+                    <li><strong>Hit or Miss</strong>: Your opponent will tell you if it’s a "hit" (a ship occupies that cell) or a "miss" (the cell is empty). Mark hits and misses on your grid for reference.</li>
+                    <li><strong>Sinking Ships</strong>: When all cells of a ship are hit, that ship is "sunk." The opponent must declare the ship sunk.</li>
+                </ol>
+
+                <h2>4. Winning the Game</h2>
+                <p>The first player to sink all five of their opponent’s ships wins the game!</p>
+
+                <h2>5. Tips & Strategies</h2>
+                <ul>
+                    <li><strong>Spread out your ships</strong> to make them harder to find.</li>
+                    <li><strong>Track your hits and misses</strong> to avoid repeating guesses.</li>
+                    <li><strong>Focus on hits</strong> to sink ships faster by checking surrounding cells.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
