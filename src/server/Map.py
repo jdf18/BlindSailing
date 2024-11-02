@@ -1,6 +1,6 @@
 import numpy as np
 import ships
-rot90 = np.array([[0, -1], [1, 0]])
+ROT90 = np.array([[0, -1], [1, 0]])
 class Board:
     def __init__(self, gridSize: np.array, ships: list):
         self.gridSize = gridSize
@@ -37,7 +37,6 @@ class Board:
             self.grid[coord[0]][coord[1]] = index
     
     def rotateShip(self, index: int, times: int):
-        global rot90
         shipCentre = self.ships[index].getCentre()
         coords = self.ships[index].getCoords()
         for i in range(times):
