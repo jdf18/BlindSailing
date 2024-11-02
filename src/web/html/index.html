@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battleships Game</title>
+    <title>Battleships Lobby</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -21,22 +21,25 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mt-5">
         <h1 class="text-center">Battleships</h1>
-        <p class="text-center">Place your ships and prepare for battle!</p>
+        <p class="text-center">Create or join a lobby to start playing.</p>
 
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <h2 class="text-center">Player Board</h2>
-                <div class="grid" id="player-board">
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6 text-center">
+                <!-- Create Lobby Button -->
+                <button class="btn btn-primary btn-lg mb-4" id="create-lobby">Create Lobby</button>
+
+                <!-- Join Lobby Section -->
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control-" id="lobby-code" placeholder="Lobby Code" aria-label="Lobby Code" aria-describedby="join-lobby-button">
+                    <div class="input-group-append">
+                        <button class="btn btn-success" type="button" id="join-lobby-button">Join Lobby</button>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
-
-
-
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>

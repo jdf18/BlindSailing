@@ -4,36 +4,27 @@ body {
 
 h1 {
     margin-top: 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
 }
+
+#battleships-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3rem;
+    color: #343a40; 
+}
+
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(10, 30px);
-    grid-template-rows: repeat(10, 30px);
     gap: 2px;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .grid div {
     width: 30px;
     height: 30px;
     background-color: lightblue;
-    border: 1px solid skyblue;
+    border: 1px solid lightblue;
 }
 
-#player-board div {
-    background-color: lightcoral;
-}
-
-#opponent-board div {
-    cursor: pointer;
-}
-
-#opponent-board div:hover {
-    background-color: lightgreen;
-}
-
-footer {
-    margin-top: 40px;
-}
