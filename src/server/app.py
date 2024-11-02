@@ -5,6 +5,7 @@ from user_manager import UserManager, User, LoginStatus
 from game_server import GamesServer, GamesManager
 
 
+
 def create_app() -> Flask:
     web_src_path = path.abspath("src/web")
     app = Flask(__name__, 
