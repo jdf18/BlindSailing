@@ -11,6 +11,7 @@ class Ship:
         self.rot90 = np.array([[0, -1], [1, 0]])
         if team != 1 and team != 2:
             raise ValueError("team must be 1 or 2")
+        self.team = team
         self.hitSections = [False for i in range(length)]
 
     def step(self, distance: int):
