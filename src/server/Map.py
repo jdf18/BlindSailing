@@ -9,12 +9,14 @@ class Board:
         self.ships = []
         self.grid = [[None for i in range(gridSize[0])] for i in range(gridSize[1])]
     
-    def addShip(self, ship: ships.ship) -> int:
+    def addShip(self, ship: ships.Ship) -> int:
         for coord in ship.getCoords():
             if self.indexGrid(coord) != None:
                 raise ValueError("Cannot place a ship in an occupied position")
         self.ships.append(ship)
-        return len(ships) - 1
+        for coord in ship.getCoords():
+            self.updateGrid(coord, len(self.ships) - 1)
+        return len(self.ships) - 1
 
     def indexGrid(self, x: int, y: int) -> int:
         return self.grid[x][y]
@@ -73,3 +75,27 @@ class Board:
                     self.updateGrid(c, None)
             return (True, ind, ships[ind].isDead())
         return False
+
+class Game:
+    def __init__(self):
+        self.board = Board(np.array([30, 30]))
+        self.p1Ships = []
+        self.p2Ships = []
+        self.p1Ships.append(self.board.addShip(ships.AirCarrier(np.array([4, 28]), np.array([1, 0]), 1)))
+        self.p1Ships.append(self.board.addShip(ships.Battleship(np.array([3, 26]), np.array([1, 0]), 1)))
+        self.p1Ships.append(self.board.addShip(ships.Cruiser(np.array([2, 24]), np.array([1, 0]), 1)))
+        self.p1Ships.append(self.board.addShip(ships.Submarine(np.array([2, 22]), np.array([1, 0]), 1)))
+        self.p1Ships.append(self.board.addShip(ships.Destroyer(np.array([1, 20]), np.array([1, 0]), 1)))
+        self.p2Ships.append(self.board.addShip(ships.AirCarrier(np.array([25, 28]), np.array([-1, 0]), 2)))
+        self.p2Ships.append(self.board.addShip(ships.Battleship(np.array([26, 26]), np.array([-1, 0]), 2)))
+        self.p2Ships.append(self.board.addShip(ships.Cruiser(np.array([27, 24]), np.array([-1, 0]), 2)))
+        self.p2Ships.append(self.board.addShip(ships.Submarine(np.array([27, 22]), np.array([-1, 0]), 2)))
+        self.p2Ships.append(self.board.addShip(ships.Destroyer(np.array([28, 20]), np.array([-1, 0]), 2)))
+    def addShip(self, ship: ships.Ship) -> int:
+        return self.board.addShip(ship)
+    def moveShip(self, index: int, dist: int):
+        self.board.moveShip(index, dist)
+    def rotateShip(self, index: int, times: int):
+        self.board.rotateShip(index, times)
+    def shoot(self, coord):
+        self.board.shoot(coord)
