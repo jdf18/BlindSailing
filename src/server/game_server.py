@@ -1,3 +1,4 @@
+from typing import Optional
 import random
 from enum import Enum
 
@@ -7,7 +8,7 @@ class Game:
     pass
 
 class GamesManager:
-    class LobbyInfo:
+    class Lobby:
         class LobbyState(Enum):
             OPEN = 0
             RUNNING = 1
@@ -16,18 +17,21 @@ class GamesManager:
         lobby_state: LobbyState
         lobby_uid: str
         game_index: int
-        whitelist: list[int]
+        whitelist: list[Optional[int]]
 
         def __init__(self, state, uid, game_index) -> None:
             self.lobby_state = state
             self.lobby_uid = uid
             self.game_index = game_index
 
+            self.whitelist = [None, None]
+
     game_servers: list[Game]
-    lobby_uids: list[LobbyInfo]
+    lobby_uids: list[Lobby]
 
     def __init__(self, max_game_servers: int = 64):
         self.game_servers = [None for _ in range(max_game_servers)]
+        self.lobby_uids = []
 
     def generate_lobby_uid(self):
         uid: str = ''
@@ -40,8 +44,8 @@ class GamesManager:
             break
 
         self.lobby_uids.append(
-            self.LobbyInfo(
-                self.LobbyInfo.LobbyState.GENERATED, 
+            self.Lobby(
+                self.Lobby.LobbyState.GENERATED, 
                 uid,
                 None
             )
@@ -58,7 +62,7 @@ class GamesServer:
         self.user_manager = UserManager()
         self.games_manager = GamesManager()
 
-    def start_lobby(self) -> GamesManager.LobbyInfo:
+    def start_lobby(self) -> GamesManager.Lobby:
         lobby_uid = self.games_manager.generate_lobby_uid()
         game = Game() # todo 
 
@@ -70,8 +74,8 @@ class GamesServer:
         else:
             raise BufferError("Games servers array full")
 
-        lobby: GamesManager.LobbyInfo = filter(lambda x:x.lobby_uid == lobby_uid, self.games_manager.lobby_uids)[0]
-        lobby.lobby_state = GamesManager.LobbyInfo.LobbyState.OPEN
+        lobby: GamesManager.Lobby = list(filter(lambda x:x.lobby_uid == lobby_uid, self.games_manager.lobby_uids))[0]
+        lobby.lobby_state = GamesManager.Lobby.LobbyState.OPEN
         lobby.lobby_uid = lobby_uid
         lobby.game_index = game_index
 
