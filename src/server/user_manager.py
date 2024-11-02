@@ -29,6 +29,7 @@ class UserManager:
             new_uid = self.find_unused_uid()
             self.users[new_uid] = User()
             self.current_users += 1
+            print("user", new_uid, "connected")
             return new_uid
         return -1
 
@@ -36,5 +37,6 @@ class UserManager:
         if self.users[user_id] != None:
             self.users[user_id] = None
             self.current_users -= 1
+            print("user", user_id, "disconnected")
             return True
         return False
