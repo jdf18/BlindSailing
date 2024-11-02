@@ -11,16 +11,34 @@ class ship:
         self.rot90 = np.array([[0, -1], [1, 0]])
         if team != 1 and team != 2:
             raise ValueError("team must be 1 or 2")
+        self.hitSections = [False for i in range(length)]
 
     def step(self, distance: int):
         self.front += distance * self.facing
     
+    def getCentre(self):
+        return self.front - (self.facing * (self.length // 2))
+    
     def rotate(self, times: int):
-        centre = self.front - (self.facing * (self.length // 2))
-        print(centre)
+        centre = self.getCentre()
         for i in range(times):
             self.front = np.matmul(self.rot90, (self.front - centre)) + centre
         self.facing = np.matmul(self.rot90, self.facing)
+    
+    def getCoords(self) -> np.array:
+        coords = []
+        for i in range(self.length):
+            coords.append(self.front - self.facing * i)
+        return coords
+    
+    def hit(self, coord: np.array):
+        coords = self.getCoords()
+        for i in range(len(coords)):
+            if coords[i] == coord:
+                self.hitSections[i] == True
+    
+    def isDead(self) -> bool:
+        return all(self.hitSections)
 
 
 # 5-long
