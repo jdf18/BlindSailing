@@ -1,7 +1,7 @@
 import numpy as np
 # Base class for all ships. front is the co-ords of the front of the ship, facing is the direction the ship is facing
 # Length is the length of the ship (all ships have width 1). viewRadius and fireRadius are the radiuses the ship can see and shoot in
-class ship:
+class Ship:
     def __init__(self, length: int, front: np.array, facing: np.array, viewRadius: int, fireRadius: int, team: int):
         self.length = length
         self.front = front
@@ -42,26 +42,26 @@ class ship:
 
 
 # 5-long
-class airCarrier(ship):
+class AirCarrier(Ship):
     def __init__(self, front: np.array, facing: np.array, team: int):
         super().__init__(5, front, facing, 12, 6, team)
 
 # 4-long
-class Battleship(ship):
+class Battleship(Ship):
     def __init__(self, front: np.array, facing: np.array, team: int):
         super().__init__(4, front, facing, 8, 8, team)
 
 # 3-long
-class Cruiser(ship):
+class Cruiser(Ship):
     def __init__(self, front: np.array, facing: np.array, team: int):
         super().__init__(3, front, facing, 6, 6, team)
 
 # 3-long
-class Submarine(ship):
+class Submarine(Ship):
     def __init__(self, front: np.array, facing: np.array, team: int):
         super().__init__(3, front, facing, 5, 12, team)
 
 # 2-long
-class Destroyer(ship):
+class Destroyer(Ship):
     def __init__(self, front: np.array, facing: np.array, team: int):
         super().__init__(2, front, facing, 4, 4, team)
