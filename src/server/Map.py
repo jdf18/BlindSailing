@@ -4,6 +4,7 @@ import math
 
 ROT90 = np.array([[0, -1], [1, 0]])
 
+#Main class storing the board state, includes lots of methods
 class Board:
     def __init__(self, gridSize: np.array):
         self.gridSize = gridSize
