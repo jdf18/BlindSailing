@@ -27,7 +27,7 @@ class Board:
         return self.grid[x][y]
     
     def indexGrid(self, pos: np.array) -> int:
-        return self.grid[pos[0]][pos[1]]
+        return self.grid[int(pos[0])][int(pos[1])]
     
     def updateGrid(self, pos: np.array, val: int):
         self.grid[pos[0]][pos[1]] = val

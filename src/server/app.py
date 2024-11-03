@@ -3,7 +3,7 @@ from flask import Flask, abort, jsonify, render_template, request, redirect, sen
 import numpy as np
 from user_manager import UserManager, User, LoginStatus
 from game_server import GamesServer, GamesManager
-
+from math import floor
 
 
 def create_app() -> Flask:
@@ -186,12 +186,14 @@ def create_app() -> Flask:
         # data['position']: tuple[int, int]
 
         print(data)
+        pos = [floor(data['position'][0]), floor(data['position'][1])]
 
         try:
-            game.shootFromShip(game.getShipIndex(user_uid, data['ship_index']), np.asarray(data['position']))
+            game.shootFromShip(game.getShipIndex(user_uid, data['ship_index']), np.asarray(pos))
             success = True
             game.logMove(game.getShipIndex(user_uid, data['ship_index']))
             game.changeTurnifFinished()
+            print(game, user_uid, data['position'])
         except ValueError:
             pass
         return jsonify({'success': success}), 200 
@@ -458,6 +460,8 @@ def create_app() -> Flask:
 
         for item in firableTiles:
             possible_attacks.append((int(item[0]), int(item[1])))
+
+        print(possible_attacks)
 
         return jsonify(possible_attacks), 200 
     

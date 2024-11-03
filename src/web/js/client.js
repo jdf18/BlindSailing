@@ -191,7 +191,8 @@ async function render() {
     const damagedCells = await api_get_damaged_squares();
     for (let i=0; i<damagedCells.length; i++) {
         let coord = coord_to_pos(damagedCells[i], 0);
-        ctx.drawImage(explosion, coord[0], coord[1]);
+        console.log(coord);
+        ctx.drawImage(explosion, Math.round(coord[0]), Math.round(coord[1]));
     };
 };
 
@@ -355,14 +356,14 @@ canv.addEventListener('click', event => {
     let bound = canv.getBoundingClientRect();
     let x = event.clientX - bound.left - canv.clientLeft;
     let y = event.clientY - bound.top - canv.clientTop;
-    coord = pos_to_coord([x, y]);
+    coord = pos_to_coord([Math.round(x), Math.round(y)]);
     console.log(coord);
+    console.log(choose_fire_square);
     if (choose_fire_square) {
         api_fire(currently_selected_ship, coord);
         choose_fire_square = false;
+        render(); switch_current_ship(false);
     }
-
-    render(); switch_current_ship(false);
 });
 
 async function switch_current_ship(left) {
