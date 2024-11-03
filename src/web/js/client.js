@@ -3,6 +3,9 @@ function render() {
     const ctx = canvas.getContext("2d");
     define_images();
 
+    ctx.fillStyle = "#3f3f3f";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     const visibleCells = get_visible_cells();
     for (let i=0; i<visibleCells.length; i++) {
         let coord = coord_to_pos(visibleCells[i], 0);
