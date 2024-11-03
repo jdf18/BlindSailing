@@ -306,11 +306,11 @@ class Game:
         allTiles = set()
         if playerID == self.players[0]:
             for ind in self.p1Ships:
-                allTiles |= set(tuple, self.getVisibleTilesTuple(ind)[0])
+                allTiles |= set(self.getVisibleTilesTuple(ind)[0])
             return allTiles
         if playerID == self.players[1]:
             for ind in self.p2Ships:
-                allTiles |= set(tuple, self.getVisibleTilesTuple(ind)[0])
+                allTiles |= set(self.getVisibleTilesTuple(ind)[0])
             return allTiles
         raise ValueError("PlayerID does not correspond to a player.")
     
@@ -318,11 +318,11 @@ class Game:
         allTiles = set()
         if playerID == self.players[0]:
             for ind in self.p1Ships:
-                allTiles |= set(tuple, self.getVisibleTilesTuple(ind)[1])
+                allTiles |= set(self.getVisibleTilesTuple(ind)[1])
             return allTiles
         if playerID == self.players[1]:
             for ind in self.p2Ships:
-                allTiles |= set(tuple, self.getVisibleTilesTuple(ind)[1])
+                allTiles |= set(self.getVisibleTilesTuple(ind)[1])
             return allTiles
         raise ValueError("PlayerID does not correspond to a player.")
     
