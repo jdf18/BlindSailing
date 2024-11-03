@@ -87,6 +87,8 @@ const fog = new Image();
 fog.src = "/assets/fog.png";
 const sea = new Image();
 sea.src = "/assets/sea.png";
+const selectedCell = new Image();
+selectedCell.src = "/assets/selectedCell.png";
 
 //From https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
 let canv = document.getElementById("grid");
@@ -325,13 +327,21 @@ function get_img(filename, rotation) {
 
 function coord_to_pos(coord, rotation) {
     if (rotation == 0) {
-        return [16*coord[0]+1, 16*coord[1]+2];
+        return [16*coord[0], 16*coord[1]+1];
     } else if (rotation == 1) {
-        return [16*coord[0]+1, 16*coord[1]+1];
+        return [16*coord[0], 16*coord[1]];
     } else if (rotation == 2) {
-        return [16*coord[0]+2, 16*coord[1]+1];
+        return [16*coord[0]+1, 16*coord[1]];
     } else {
-        return [16*coord[0]+2, 16*coord[1]+2];
+        return [16*coord[0]+1, 16*coord[1]+1];
+    };
+};
+
+function render_fire() {
+    const coords = api_get_possible_attacks();
+    for (let i=0; i<coords.length; i++) {
+        let coord = coord_to_pos(coords[i], 1);
+        ctx.drawImage(selectedCell, coord[0], coord[1]);
     };
 };
 
