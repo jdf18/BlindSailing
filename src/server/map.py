@@ -217,13 +217,14 @@ class Game:
         self.turn = playerID
         self.movedShips = []
 
-    def changeTurnifFinished(self, playerID):
-        
-        if playerID == self.players[0]:
+    def changeTurnifFinished(self):
+        if self.turn == self.players[0]:
+            no_of_alive_ships = len(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p1Ships)))
             if not len(self.movedShips) == len(self.p1Ships):
                 return
             self.startTurn(self.players[1])
-        if playerID == self.players[1]:
+        if self.turn == self.players[1]:
+            no_of_alive_ships = len(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p2Ships)))
             if not len(self.movedShips) == len(self.p2Ships):
                 return
             self.startTurn(self.players[0])
