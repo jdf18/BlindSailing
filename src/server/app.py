@@ -328,7 +328,7 @@ def create_app() -> Flask:
             'filename':str,
             'position':tuple[int, int],
             'facing':int]] = []
-        visibleList = game.getVisibleFriendlyShips()
+        visibleList = game.getVisibleFriendlyShips(user_uid)
         for ind in visibleList:
             toAdd = {
                 'filename':game.playerShipDict[game.board.ships[ind].id],
