@@ -185,10 +185,12 @@ def create_app() -> Flask:
         # data['ship_index']: int
         # data['position']: tuple[int, int]
 
+        print(data)
+
         try:
-            game.shootFromShip(game.getShipIndex(data['ship_index']), np.asarray(data['position']))
+            game.shootFromShip(game.getShipIndex(user_uid, data['ship_index']), np.asarray(data['position']))
             success = True
-            game.logMove(game.getShipIndex(data['ship_index']))
+            game.logMove(game.getShipIndex(user_uid, data['ship_index']))
             game.changeTurnifFinished()
         except ValueError:
             pass
@@ -215,9 +217,9 @@ def create_app() -> Flask:
             ] = request.get_json()
 
         try:
-            game.moveShip(game.getShipIndex(data['ship_index']), data['count'])
+            game.moveShip(game.getShipIndex(user_uid, data['ship_index']), data['count'])
             success = True
-            game.logMove(game.getShipIndex(data['ship_index']))
+            game.logMove(game.getShipIndex(user_uid, data['ship_index']))
             game.changeTurnifFinished()
         except ValueError:
             pass
@@ -245,11 +247,11 @@ def create_app() -> Flask:
 
         try:
             if data['is_acw']:
-                game.rotateShip(game.getShipIndex(data['ship_index']), 3)
+                game.rotateShip(game.getShipIndex(user_uid, data['ship_index']), 3)
             else:
-                game.rotateShip(game.getShipIndex(data['ship_index']), 1)
+                game.rotateShip(game.getShipIndex(user_uid, data['ship_index']), 1)
             success = True
-            game.logMove(game.getShipIndex(data['ship_index']))
+            game.logMove(game.getShipIndex(user_uid, data['ship_index']))
             game.changeTurnifFinished()
         except ValueError:
             pass
@@ -286,8 +288,8 @@ def create_app() -> Flask:
 
         return jsonify({'is_winner': is_player_winner}), 200 
     
-    @app.route("/api/v1/game_get_availiable_ships", methods=["POST"])
-    def api_game_get_availiable_ships():
+    @app.route("/api/v1/game_get_available_ships", methods=["POST"])
+    def api_game_get_available_ships():
         require_connection()
         user_uid = session['login_uid']
         user: User = server.user_manager.users[user_uid]
@@ -299,7 +301,7 @@ def create_app() -> Flask:
 
         available_ships: list = game.getUnmovedShips(user_uid)
         for i in range(len(available_ships)):
-            available_ships[i] = game.getPlayerIndex(available_ships[i])
+            available_ships[i] = game.getPlayerIndex(available_ships[i], user_uid)
         return jsonify(available_ships), 200 
     
     @app.route("/api/v1/graphics_get_grid_size", methods=["POST"])
@@ -452,9 +454,10 @@ def create_app() -> Flask:
             'ship_index': int
             ] = request.get_json()
         
-        firableTiles = game.getFirableTiles(game.getShipIndex(data['ship_index']))
+        firableTiles = game.getFirableTiles(game.getShipIndex(user_uid, data['ship_index']))
+
         for item in firableTiles:
-            possible_attacks.append((item[0], item[1]))
+            possible_attacks.append((int(item[0]), int(item[1])))
 
         return jsonify(possible_attacks), 200 
     
@@ -485,18 +488,27 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
         
-        ship_data: dict["filename":str, "is_dead":bool]
+        ship_data: dict["filename":str, "is_dead":bool] = request.get_json()
 
-        if not request.is_json:
-            return 'None', 400
-        success: bool = False
+        shipData = game.getShipData(game.getShipIndex(user_uid, ship_data['ship_index']), user_uid)
 
-        data: dict[
-            'ship_index': int
-            ] = request.get_json()
-        
+        return jsonify(shipData), 200 
+    
+    @app.route('/api/v1/end_turn', methods=['POST'])
+    def api_t():
+        require_connection()
 
-        return jsonify(game.getShipData(game.getShipIndex)), 200 
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+
+        game.startTurn(user_uid)
+
+        return 'None', 200
         
     
 

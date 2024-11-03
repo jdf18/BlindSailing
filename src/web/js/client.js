@@ -1,5 +1,10 @@
 let client_turn_interval = null;
 let wait_for_opponent_interval = null;
+
+let currently_selected_ship = 0;
+let choose_fire_square = false;
+
+
 const airCarrier_0_N = new Image();
 airCarrier_0_N.src = "/assets/n-airCarrier-0.png";
 const airCarrier_0_S = new Image();
@@ -90,15 +95,6 @@ sea.src = "/assets/sea.png";
 const selectedCell = new Image();
 selectedCell.src = "/assets/selectedCell.png";
 
-//From https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
-let canv = document.getElementById("grid");
-canv.addEventListener('click', event => {
-    let bound = canv.getBoundingClientRect();
-    let x = event.clientX - bound.left - canv.clientLeft;
-    let y = event.clientY - bound.top - canv.clientTop;
-    coord = pos_to_coord([x, y]);
-});
-
 function poll_while_waiting_for_opponent() {
     clearInterval(client_turn_interval);
     if (wait_for_opponent_interval) return;
@@ -142,7 +138,7 @@ function poll_while_client_turn() {
                 console.log("It is now the clients turn");
                 clearInterval(wait_for_opponent_interval);
                 wait_for_opponent_interval = null;
-                poll_while_client_turn();
+                poll_while_waiting_for_opponent();
             }
         } catch (error) {
             console.error("Error polling for player status:", error);
@@ -179,47 +175,25 @@ async function render() {
         let coord = coord_to_pos(enemyShips[i][1], enemyShips[i][2]);
         ctx.drawImage(get_img(enemyShips[i][0], enemyShips[i][2]), coord[0], coord[1]);
     };
-
-    const hiddenCells = await api_get_hidden_cells();
-    for (let i=0; i<hiddenCells.length; i++) {
-        let coord = coord_to_pos(hiddenCells[i], 0);
-        ctx.drawImage(fog, coord[0], coord[1]);
-    };
-
+    
     const friendlyShips = await api_get_visible_friendly_ships();
     for (let i=0; i<friendlyShips.length; i++) {
         let coord = coord_to_pos(friendlyShips[i][1], friendlyShips[i][2]);
         ctx.drawImage(get_img(friendlyShips[i][0], friendlyShips[i][2]), coord[0], coord[1]);
     };
-
+    
+    const hiddenCells = await api_get_hidden_cells();
+    for (let i=0; i<hiddenCells.length; i++) {
+        let coord = coord_to_pos(hiddenCells[i], 0);
+        ctx.drawImage(fog, coord[0], coord[1]);
+    };
+    
     const damagedCells = await api_get_damaged_squares();
     for (let i=0; i<damagedCells.length; i++) {
         let coord = coord_to_pos(damagedCells[i], 0);
         ctx.drawImage(explosion, coord[0], coord[1]);
     };
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function get_img(filename, rotation) {
@@ -338,7 +312,7 @@ function coord_to_pos(coord, rotation) {
 };
 
 function render_fire() {
-    const coords = api_get_possible_attacks();
+    const coords = api_get_possible_attacks(currently_selected_ship);
     for (let i=0; i<coords.length; i++) {
         let coord = coord_to_pos(coords[i], 1);
         ctx.drawImage(selectedCell, coord[0], coord[1]);
@@ -346,5 +320,71 @@ function render_fire() {
 };
 
 function pos_to_coord(pos){
-    [pos[0] / 16, (pos[1] - 1) / 16]
+    return [pos[0] / 16, (pos[1] - 1) / 16]
+}
+
+
+async function on_button_move() {
+    if (is_user_input_activated) {
+        await api_move(currently_selected_ship, 1);
+    }
+    render();await switch_current_ship(false);
+}
+
+async function on_button_rotate(anti_clockwise) {
+    if (is_user_input_activated) {
+        await api_rotate(currently_selected_ship, anti_clockwise);
+    }
+    render();await switch_current_ship(false);
+}
+
+async function on_button_fire() {
+    if (is_user_input_activated) {
+        await render_fire();
+        choose_fire_square = true;
+    }
+
+    render_fire();
+
+
+}
+
+//From https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+let canv = document.getElementById("grid");
+canv.addEventListener('click', event => {
+    let bound = canv.getBoundingClientRect();
+    let x = event.clientX - bound.left - canv.clientLeft;
+    let y = event.clientY - bound.top - canv.clientTop;
+    coord = pos_to_coord([x, y]);
+    console.log(coord);
+    if (choose_fire_square) {
+        api_fire(currently_selected_ship, coord);
+        choose_fire_square = false;
+    }
+
+    render(); switch_current_ship(false);
+});
+
+async function switch_current_ship(left) {
+    let x = await api_get_available_ships();
+    let index = x.indexOf(currently_selected_ship)
+    if (left) {
+        currently_selected_ship = x[(index - 1) % x.length];
+    } else {
+        currently_selected_ship = x[(index + 1) % x.length];
+    }
+    console.log(currently_selected_ship);
+    let y = await api_get_ship_details(currently_selected_ship);
+
+    const previewship = document.getElementById("previewship");
+    console.log(y);
+    previewship.src = ("/assets/e-" + y['filename'])
+}
+
+render();
+
+if (api_is_player_one()) {
+    poll_while_client_turn();
+} else {
+    poll_while_waiting_for_opponent();
 }
