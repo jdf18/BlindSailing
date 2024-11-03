@@ -175,19 +175,19 @@ async function render() {
         let coord = coord_to_pos(enemyShips[i][1], enemyShips[i][2]);
         ctx.drawImage(get_img(enemyShips[i][0], enemyShips[i][2]), coord[0], coord[1]);
     };
-
-    const hiddenCells = await api_get_hidden_cells();
-    for (let i=0; i<hiddenCells.length; i++) {
-        let coord = coord_to_pos(hiddenCells[i], 0);
-        ctx.drawImage(fog, coord[0], coord[1]);
-    };
-
+    
     const friendlyShips = await api_get_visible_friendly_ships();
     for (let i=0; i<friendlyShips.length; i++) {
         let coord = coord_to_pos(friendlyShips[i][1], friendlyShips[i][2]);
         ctx.drawImage(get_img(friendlyShips[i][0], friendlyShips[i][2]), coord[0], coord[1]);
     };
-
+    
+    const hiddenCells = await api_get_hidden_cells();
+    for (let i=0; i<hiddenCells.length; i++) {
+        let coord = coord_to_pos(hiddenCells[i], 0);
+        ctx.drawImage(fog, coord[0], coord[1]);
+    };
+    
     const damagedCells = await api_get_damaged_squares();
     for (let i=0; i<damagedCells.length; i++) {
         let coord = coord_to_pos(damagedCells[i], 0);
@@ -341,6 +341,8 @@ function on_button_fire() {
         render_fire();
         choose_fire_square = true;
     }
+
+
 }
 
 //From https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
