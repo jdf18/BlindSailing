@@ -211,7 +211,7 @@ async function render() {
 
 
 
-function get_img(filenamem, rotation) {
+function get_img(filename, rotation) {
     if (rotation == 0){
     switch (filename) {
         case "airCarrier-0.png":
