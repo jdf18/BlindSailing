@@ -39,6 +39,8 @@ async function api_create_lobby() {
 }
 
 async function api_fire(ship_index, pos){
+    // Returns: Boolean success
+    
     try{
         const response = await fetch('/api/v1/game_fire',{
             method: 'POST',
@@ -62,6 +64,8 @@ async function api_fire(ship_index, pos){
 }
 
 async function api_is_my_turn(){
+    // Returns: Boolean success
+
     try{
         const response = await fetch('/api/v1/game_is_my_turn',{
             method: 'POST',
@@ -79,6 +83,8 @@ async function api_is_my_turn(){
 }
 
 async function api_move(ship_index, count){
+    // Returns: Boolean success
+
     try{
         const response = await fetch('/api/v1/game_move',{
             method: 'POST',
@@ -102,6 +108,8 @@ async function api_move(ship_index, count){
 }
 
 async function api_rotate(ship_index, is_anti_clockwise){
+    // Returns: Boolean success
+
     try{
         const response = await fetch('/api/v1/game_rotate',{
             method: 'POST',
@@ -125,6 +133,8 @@ async function api_rotate(ship_index, is_anti_clockwise){
 }
 
 async function has_game_finished(){
+    // Returns: Boolean has_game_finished
+
     try{
         const response = await fetch('/api/v1/game_has_game_finished',{
             method: 'POST',
@@ -142,6 +152,8 @@ async function has_game_finished(){
 }
 
 async function is_winner(){
+    // Returns: Boolean is_player_winner
+
     try{
         const response = await fetch('/api/v1/game_is_winner',{
             method: 'POST',
@@ -159,6 +171,8 @@ async function is_winner(){
 }
 
 async function get_available_ships(){
+    // Returns: List[ Int indexes ]  
+
     try{
         const response = await fetch('/api/v1/game_get_available_ships',{
             method: 'POST',
@@ -175,6 +189,8 @@ async function get_available_ships(){
 }
 
 async function get_grid_size(){
+    // Returns: [Int x, Int y]
+
     try{
         const response = await fetch('/api/v1/graphics_get_grid_size',{
             method: 'POST',
@@ -191,6 +207,8 @@ async function get_grid_size(){
 }
 
 async function get_visible_friendly_ships(){
+    // Returns: List[ (String filename, [Int x, Int y], Int rotation) ]  
+
     try{
         const response = await fetch('/api/v1/graphics_get_visible_friendly_ships',{
             method: 'POST',
@@ -207,6 +225,8 @@ async function get_visible_friendly_ships(){
 }
 
 async function get_visible_enemy_ships(){
+    // Returns: List[ (String filename, [Int x, Int y], Int rotation) ]  
+
     try{
         const response = await fetch('/api/v1/graphics_get_visible_enemy_ships',{
             method: 'POST',
@@ -223,6 +243,8 @@ async function get_visible_enemy_ships(){
 }
 
 async function get_damaged_squares(){
+    // Returns: List[ (Int x, Int y) ]
+
     try{
         const response = await fetch('/api/v1/graphics_get_damaged_squares',{
             method: 'POST',
@@ -239,6 +261,8 @@ async function get_damaged_squares(){
 }
 
 async function get_hidden_cells(){
+    // Returns: List[ (Int x, Int y) ]
+
     try{
         const response = await fetch('/api/v1/graphics_get_hidden_cells',{
             method: 'POST',
@@ -254,7 +278,9 @@ async function get_hidden_cells(){
     return data;
 }
 
-async function get_possible_attack(ship_index){
+async function get_possible_attacks(ship_index){
+    // Returns: List[ (Int x, Int y) ]
+
     try{
         const response = await fetch('/api/v1/graphics_get_possible_attack',{
             method: 'POST',
@@ -275,7 +301,9 @@ async function get_possible_attack(ship_index){
     return data;
 }
 
-async function get_visible_cells(){
+async function get_visible_cells() {
+    // Returns: List[ (Int x, Int y) ]
+    
     try{
         const response = await fetch('/api/v1/graphics_get_visible_cells',{
             method: 'POST',
