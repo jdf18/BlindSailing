@@ -458,6 +458,22 @@ def create_app() -> Flask:
 
         return jsonify(possible_attacks), 200 
     
+    @app.route("/api/v1/api_is_player_one", methods=["POST"])
+    def api_is_player_one():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+
+        if not request.is_json:
+            return 'None', 400
+
+        return jsonify(game.isPlayerOne(user_uid)), 200 
+    
 
     @app.route("/assets/<path:filename>")
     def download_asset(filename):

@@ -4,6 +4,8 @@ html, body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    background-color: brown;
+    font-family:'Courier New', Courier, monospace;
 }
 
 /* Main container with Flexbox */
@@ -34,4 +36,12 @@ html, body {
     justify-content: center;
     border: 3px solid black;
     height: 100%;               /* Ensure it stretches to full height */
+}
+
+img.pixel {
+    image-rendering: pixelated
+}
+
+h2 {
+    font-size: xx-large;
 }
