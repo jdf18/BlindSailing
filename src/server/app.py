@@ -355,9 +355,10 @@ def create_app() -> Flask:
             int]] = []
 
         for ind in game.getAllVisibleEnemyShips(user_uid):
+            pos = game.board.ships[ind].getTopLeft()
             toAdd = (
                 game.enemyShipDict[game.board.ships[ind].id],
-                (int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
+                (int(pos[0]), int(pos[1])),
                 game.board.ships[ind].getFacingasValue()
             )
             visible_enemy_ships.append(toAdd)
