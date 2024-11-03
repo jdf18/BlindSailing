@@ -455,6 +455,7 @@ def create_app() -> Flask:
             ] = request.get_json()
         
         firableTiles = game.getFirableTiles(game.getShipIndex(user_uid, data['ship_index']))
+
         for item in firableTiles:
             possible_attacks.append((int(item[0]), int(item[1])))
 

@@ -342,6 +342,7 @@ class Game:
         if user_uid == self.players[0]:
             fname = self.playerShipDict[self.board.ships[index].id]
         elif user_uid == self.players[1]:
+
             fname = self.enemyShipDict[self.board.ships[index].id]
 
         return {"filename":fname, "is_dead":self.board.ships[index].isDead()}
