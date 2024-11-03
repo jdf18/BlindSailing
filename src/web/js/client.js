@@ -181,7 +181,7 @@ function get_img(filename) {
     };
 };
 
-function coords_to_pos(coord, rotation) {
+function coord_to_pos(coord, rotation) {
     if (rotation == 0) {
         return [16*coord[0], 16*coord[1]+1];
     } else if (rotation == 1) {
