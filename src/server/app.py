@@ -472,7 +472,7 @@ def create_app() -> Flask:
         if not request.is_json:
             return 'None', 400
 
-        return jsonify(game.isPlayerOne(user_uid)), 200 
+        return jsonify({'is_player_one':game.isPlayerOne(user_uid)}), 200 
     
 
     @app.route("/assets/<path:filename>")
