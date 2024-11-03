@@ -132,7 +132,7 @@ async function api_rotate(ship_index, is_anti_clockwise){
     return success;
 }
 
-async function has_game_finished(){
+async function api_has_game_finished(){
     // Returns: Boolean has_game_finished
 
     try{
@@ -151,7 +151,7 @@ async function has_game_finished(){
     return has_game_finished;
 }
 
-async function is_winner(){
+async function api_is_winner(){
     // Returns: Boolean is_player_winner
 
     try{
@@ -170,7 +170,7 @@ async function is_winner(){
     return is_winner;
 }
 
-async function get_available_ships(){
+async function api_get_available_ships(){
     // Returns: List[ Int indexes ]  
 
     try{
@@ -188,7 +188,7 @@ async function get_available_ships(){
     return data;
 }
 
-async function get_grid_size(){
+async function api_get_grid_size(){
     // Returns: [Int x, Int y]
     try{
         const response = await fetch('/api/v1/graphics_get_grid_size',{
@@ -205,7 +205,7 @@ async function get_grid_size(){
     return data;
 }
 
-async function get_visible_friendly_ships(){
+async function api_get_visible_friendly_ships(){
     // Returns: List[ (String filename, [Int x, Int y], Int rotation) ]  
 
     try{
@@ -223,7 +223,7 @@ async function get_visible_friendly_ships(){
     return data;
 }
 
-async function get_visible_enemy_ships(){
+async function api_get_visible_enemy_ships(){
     // Returns: List[ (String filename, [Int x, Int y], Int rotation) ]  
     try{
         const response = await fetch('/api/v1/graphics_get_visible_enemy_ships',{
@@ -240,7 +240,7 @@ async function get_visible_enemy_ships(){
     return data;
 }
 
-async function get_damaged_squares(){
+async function api_get_damaged_squares(){
     // Returns: List[ (Int x, Int y) ]
     try{
         const response = await fetch('/api/v1/graphics_get_damaged_squares',{
@@ -257,7 +257,7 @@ async function get_damaged_squares(){
     return data;
 }
 
-async function get_hidden_cells(){
+async function api_get_hidden_cells(){
     // Returns: List[ (Int x, Int y) ]
 
     try{
@@ -275,8 +275,7 @@ async function get_hidden_cells(){
     return data;
 }
 
-
-async function get_possible_attacks(ship_index){
+async function api_get_possible_attacks(ship_index){
     // Returns: List[ (Int x, Int y) ]
 
     try{
@@ -299,8 +298,9 @@ async function get_possible_attacks(ship_index){
     return data;
 }
 
-async function get_visible_cells() {
+async function api_get_visible_cells() {
     // Returns: List[ (Int x, Int y) ]
+  
     try{
         const response = await fetch('/api/v1/graphics_get_visible_cells',{
             method: 'POST',
