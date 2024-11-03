@@ -62,7 +62,7 @@ function activate_user_input() {
 function deactivate_user_input() {
     is_user_input_activated = false
 }
-=======
+
 function render() {
     const canvas = document.getElementById("grid");
     const ctx = canvas.getContext("2d");
