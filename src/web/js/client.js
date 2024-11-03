@@ -93,6 +93,9 @@ async function render() {
     const canvas = document.getElementById("grid");
     const ctx = canvas.getContext("2d");
 
+    ctx.fillStyle = "#3f3f3f";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     const visibleCells = await api_get_visible_cells();
     for (let i=0; i<visibleCells.length; i++) {
         let coord = coord_to_pos(visibleCells[i], 0);
@@ -183,12 +186,12 @@ function get_img(filename) {
 
 function coord_to_pos(coord, rotation) {
     if (rotation == 0) {
-        return [16*coord[0], 16*coord[1]+1];
+        return [16*coord[0]+1, 16*coord[1]+2];
     } else if (rotation == 1) {
-        return [16*coord[0], 16*coord[1]];
-    } else if (rotation == 2) {
-        return [16*coord[0]+1, 16*coord[1]];
-    } else {
         return [16*coord[0]+1, 16*coord[1]+1];
+    } else if (rotation == 2) {
+        return [16*coord[0]+2, 16*coord[1]+1];
+    } else {
+        return [16*coord[0]+2, 16*coord[1]+2];
     };
 };
