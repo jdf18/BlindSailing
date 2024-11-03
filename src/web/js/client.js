@@ -94,11 +94,8 @@ canv.addEventListener('click', event => {
     let bound = canv.getBoundingClientRect();
     let x = event.clientX - bound.left - canv.clientLeft;
     let y = event.clientY - bound.top - canv.clientTop;
-    let ctx = canv.getContext("2d");
-    ctx.fillRect(x, y, 16, 16)
-    console.log("clicked at", x, y)
+    coord = pos_to_coord([x, y]);
 });
-
 
 function poll_while_waiting_for_opponent() {
     clearInterval(client_turn_interval);
@@ -337,3 +334,7 @@ function coord_to_pos(coord, rotation) {
         return [16*coord[0]+2, 16*coord[1]+2];
     };
 };
+
+function pos_to_coord(pos){
+    [pos[0] / 16, (pos[1] - 1) / 16]
+}
