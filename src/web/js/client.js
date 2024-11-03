@@ -325,3 +325,5 @@ function coord_to_pos(coord, rotation) {
         return [16*coord[0]+2, 16*coord[1]+2];
     };
 };
+
+render()
