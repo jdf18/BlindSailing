@@ -185,6 +185,8 @@ def create_app() -> Flask:
         # data['ship_index']: int
         # data['position']: tuple[int, int]
 
+        print(data)
+
         try:
             game.shootFromShip(game.getShipIndex(user_uid, data['ship_index']), np.asarray(data['position']))
             success = True
@@ -454,7 +456,7 @@ def create_app() -> Flask:
         
         firableTiles = game.getFirableTiles(game.getShipIndex(user_uid, data['ship_index']))
         for item in firableTiles:
-            possible_attacks.append((item[0], item[1]))
+            possible_attacks.append((int(item[0]), int(item[1])))
 
         return jsonify(possible_attacks), 200 
     

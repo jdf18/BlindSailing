@@ -312,7 +312,7 @@ function coord_to_pos(coord, rotation) {
 };
 
 function render_fire() {
-    const coords = api_get_possible_attacks();
+    const coords = api_get_possible_attacks(currently_selected_ship);
     for (let i=0; i<coords.length; i++) {
         let coord = coord_to_pos(coords[i], 1);
         ctx.drawImage(selectedCell, coord[0], coord[1]);
@@ -320,7 +320,7 @@ function render_fire() {
 };
 
 function pos_to_coord(pos){
-    [pos[0] / 16, (pos[1] - 1) / 16]
+    return [pos[0] / 16, (pos[1] - 1) / 16]
 }
 
 
@@ -344,7 +344,7 @@ async function on_button_fire() {
         choose_fire_square = true;
     }
 
-    render();
+    render_fire();
 
 
 }
@@ -356,7 +356,7 @@ canv.addEventListener('click', event => {
     let x = event.clientX - bound.left - canv.clientLeft;
     let y = event.clientY - bound.top - canv.clientTop;
     coord = pos_to_coord([x, y]);
-
+    console.log(coord);
     if (choose_fire_square) {
         api_fire(currently_selected_ship, coord);
         choose_fire_square = false;
