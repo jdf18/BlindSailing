@@ -55,12 +55,12 @@ async function api_fire(ship_index, pos){
         if (!response.ok){
             throw new Error('Error when firing');
         }
+        const data = await response.json();
+        const success = data['success'];
+        return success;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    const success = data['success'];
-    return success;
 }
 
 async function api_is_my_turn(){
@@ -74,12 +74,12 @@ async function api_is_my_turn(){
         if (!response.ok){
             throw new Error('Error when getting turn');
         }
+        const data = await response.json();
+        const is_my_turn = data['is_my_turn'];
+        return is_my_turn;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    const is_my_turn = data['is_my_turn'];
-    return is_my_turn;
 }
 
 async function api_move(ship_index, count){
@@ -99,12 +99,12 @@ async function api_move(ship_index, count){
         if (!response.ok){
             throw new Error('Error when moving');
         }
+        const data = await response.json();
+        const success = data['success'];
+        return success;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    const success = data['success'];
-    return success;
 }
 
 async function api_rotate(ship_index, is_anti_clockwise){
@@ -124,15 +124,15 @@ async function api_rotate(ship_index, is_anti_clockwise){
         if (!response.ok){
             throw new Error('Error when rotating');
         }
+        const data = await response.json();
+        const success = data['success'];
+        return success;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    const success = data['success'];
-    return success;
 }
 
-async function has_game_finished(){
+async function api_has_game_finished(){
     // Returns: Boolean has_game_finished
 
     try{
@@ -143,6 +143,9 @@ async function has_game_finished(){
         if (!response.ok){
             throw new Error('Error when getting game finished');
         }
+        const data = await response.json();
+        const has_game_finished = data['has_game_finished'];
+        return has_game_finished;
     } catch(error){
         console.error("Error:", error.message);
     }
@@ -151,7 +154,7 @@ async function has_game_finished(){
     return has_game_finished;
 }
 
-async function is_winner(){
+async function api_is_winner(){
     // Returns: Boolean is_player_winner
 
     try{
@@ -162,15 +165,15 @@ async function is_winner(){
         if (!response.ok){
             throw new Error('Error when getting game winner');
         }
+        const data = await response.json();
+        const is_winner = data['is_winner'];
+        return is_winner;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    const is_winner = data['is_winner'];
-    return is_winner;
 }
 
-async function get_available_ships(){
+async function api_get_available_ships(){
     // Returns: List[ Int indexes ]  
 
     try{
@@ -181,16 +184,15 @@ async function get_available_ships(){
         if (!response.ok){
             throw new Error('Error when getting available ships');
         }
+        const data = await response.json();
+        return data;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    return data;
 }
 
-async function get_grid_size(){
+async function api_get_grid_size(){
     // Returns: [Int x, Int y]
-
     try{
         const response = await fetch('/api/v1/graphics_get_grid_size',{
             method: 'POST',
@@ -199,14 +201,14 @@ async function get_grid_size(){
         if (!response.ok){
             throw new Error('Error when getting grid size');
         }
+        const data = await response.json();
+        return data;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    return data;
 }
 
-async function get_visible_friendly_ships(){
+async function api_get_visible_friendly_ships(){
     // Returns: List[ (String filename, [Int x, Int y], Int rotation) ]  
 
     try{
@@ -217,16 +219,15 @@ async function get_visible_friendly_ships(){
         if (!response.ok){
             throw new Error('Error when getting visible friendly ships');
         }
+        const data = await response.json();
+        return data;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    return data;
 }
 
-async function get_visible_enemy_ships(){
+async function api_get_visible_enemy_ships(){
     // Returns: List[ (String filename, [Int x, Int y], Int rotation) ]  
-
     try{
         const response = await fetch('/api/v1/graphics_get_visible_enemy_ships',{
             method: 'POST',
@@ -235,16 +236,15 @@ async function get_visible_enemy_ships(){
         if (!response.ok){
             throw new Error('Error when getting visible enemy ships');
         }
+        const data = await response.json();
+        return data;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    return data;
 }
 
-async function get_damaged_squares(){
+async function api_get_damaged_squares(){
     // Returns: List[ (Int x, Int y) ]
-
     try{
         const response = await fetch('/api/v1/graphics_get_damaged_squares',{
             method: 'POST',
@@ -253,14 +253,14 @@ async function get_damaged_squares(){
         if (!response.ok){
             throw new Error('Error when getting damaged squares');
         }
+        const data = await response.json();
+        return data;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    return data;
 }
 
-async function get_hidden_cells(){
+async function api_get_hidden_cells(){
     // Returns: List[ (Int x, Int y) ]
 
     try{
@@ -271,18 +271,18 @@ async function get_hidden_cells(){
         if (!response.ok){
             throw new Error('Error when getting hidden cells');
         }
+        const data = await response.json();
+        return data;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    return data;
 }
 
-async function get_possible_attacks(ship_index){
+async function api_get_possible_attacks(ship_index){
     // Returns: List[ (Int x, Int y) ]
 
     try{
-        const response = await fetch('/api/v1/graphics_get_possible_attack',{
+        const response = await fetch('/api/v1/graphics_get_possible_attacks',{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -294,16 +294,16 @@ async function get_possible_attacks(ship_index){
         if (!response.ok){
             throw new Error('Error when getting possible attacks');
         }
+        const data = await response.json();
+        return data;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    return data;
 }
 
-async function get_visible_cells() {
+async function api_get_visible_cells() {
     // Returns: List[ (Int x, Int y) ]
-    
+  
     try{
         const response = await fetch('/api/v1/graphics_get_visible_cells',{
             method: 'POST',
@@ -312,9 +312,9 @@ async function get_visible_cells() {
         if (!response.ok){
             throw new Error('Error when getting visible cells');
         }
+        const data = await response.json();
+        return data;
     } catch(error){
         console.error("Error:", error.message);
     }
-    const data = await response.json();
-    return data;
 }

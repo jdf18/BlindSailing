@@ -1,12 +1,13 @@
 from os import path
-from flask import Flask, abort, jsonify, render_template, request, redirect, send_file, url_for, session
-
+from flask import Flask, abort, jsonify, render_template, request, redirect, send_file, url_for, session, send_from_directory
+import numpy as np
 from user_manager import UserManager, User, LoginStatus
 from game_server import GamesServer, GamesManager
 
 
 
 def create_app() -> Flask:
+    assets_src_path = path.abspath("src/assets")
     web_src_path = path.abspath("src/web")
     app = Flask(__name__, 
                 template_folder=web_src_path,
@@ -75,6 +76,8 @@ def create_app() -> Flask:
                 print("2nd player joined", user_uid)
 
                 lobby.lobby_state = GamesManager.Lobby.LobbyState.RUNNING
+                game = server.games_manager.game_servers[lobby.game_index]
+                game.start(user_uid)
 
         else:
             print("1st player joined", user_uid)
@@ -132,7 +135,7 @@ def create_app() -> Flask:
         user_uid = session['login_uid']
         user: User = server.user_manager.users[user_uid]
 
-        lobby = server.start_lobby()
+        lobby = server.start_lobby(user_uid)
         print("Starting lobby")
         user.current_lobby = lobby.lobby_uid
         lobby.players[0] = user_uid
@@ -159,9 +162,7 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
             
-        my_turn: bool = False
-
-        # todo
+        my_turn: bool = game.isPlayerTurn(user_uid)
 
         return jsonify({'is_my_turn': my_turn}), 200 
     
@@ -184,8 +185,12 @@ def create_app() -> Flask:
         # data['ship_index']: int
         # data['position']: tuple[int, int]
 
-        # todo
-
+        try:
+            game.shootFromShip(game.getShipIndex(data['ship_index']), np.asarray(data['position']))
+            success = True
+            game.logMove(game.getShipIndex(data['ship_index']))
+        except ValueError:
+            pass
         return jsonify({'success': success}), 200 
     
     @app.route("/api/v1/game_move", methods=["POST"])
@@ -208,8 +213,12 @@ def create_app() -> Flask:
             'count': int
             ] = request.get_json()
 
-        # todo
-
+        try:
+            game.moveShip(game.getShipIndex(data['ship_index']), data['count'])
+            success = True
+            game.logMove(game.getShipIndex(data['ship_index']))
+        except ValueError:
+            pass
         return jsonify({'success': success}), 200 
     
     @app.route("/api/v1/game_rotate", methods=["POST"])
@@ -232,7 +241,15 @@ def create_app() -> Flask:
             'is_acw': bool
             ] = request.get_json()
 
-        # todo
+        try:
+            if data['is_acw']:
+                game.rotateShip(game.getShipIndex(data['ship_index']), 3)
+            else:
+                game.rotateShip(game.getShipIndex(data['ship_index']), 1)
+            success = True
+            game.logMove(game.getShipIndex(data['ship_index']))
+        except ValueError:
+            pass
 
         return jsonify({'success': success}), 200 
     
@@ -247,9 +264,7 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
 
-        has_game_finished: bool = False
-
-        # todo
+        has_game_finished: bool = game.hasFinished
 
         return jsonify({'has_game_finished': has_game_finished}), 200 
     
@@ -264,9 +279,7 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
 
-        is_player_winner: bool = False
-
-        # todo
+        is_player_winner: bool = game.hasWon(user_uid)
 
         return jsonify({'is_winner': is_player_winner}), 200 
     
@@ -281,11 +294,10 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
 
-        availiable_ships: list = []
-
-        # todo
-
-        return jsonify(availiable_ships), 200 
+        available_ships: list = game.getUnmovedShips(user_uid)
+        for i in range(len(available_ships)):
+            available_ships[i] = game.getPlayerIndex(available_ships[i])
+        return jsonify(available_ships), 200 
     
     @app.route("/api/v1/graphics_get_grid_size", methods=["POST"])
     def api_graphics_get_grid_size():
@@ -298,10 +310,7 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
         
-        grid_size: list = []
-
-        # todo
-
+        grid_size: list = [int(game.getGridSize()[0]), int(game.getGridSize()[1])]
         return jsonify(grid_size), 200 
     
     @app.route("/api/v1/graphics_get_visible_friendly_ships", methods=["POST"])
@@ -315,13 +324,18 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
         
-        visible_friendly_ships: list[dict[
-            'filename':str,
-            'position':tuple[int, int],
-            'facing':int]] = []
-
-        # todo
-
+        visible_friendly_ships: list[tuple[
+            str,
+            tuple[int, int],
+            int]] = []
+        visibleList = game.getVisibleFriendlyShips(user_uid)
+        for ind in visibleList:
+            toAdd = (
+                game.playerShipDict[game.board.ships[ind].id],
+                (int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
+                game.board.ships[ind].getFacingasValue()
+            )
+            visible_friendly_ships.append(toAdd)
         return jsonify(visible_friendly_ships), 200 
     
     @app.route("/api/v1/graphics_get_visible_enemy_ships", methods=["POST"])
@@ -335,13 +349,18 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
         
-        visible_enemy_ships: list[dict[
-            'filename':str,
-            'position':tuple[int, int],
-            'facing':int]] = []
+        visible_enemy_ships: list[tuple[
+            str,
+            tuple[int, int],
+            int]] = []
 
-        # todo
-
+        for ind in game.getAllVisibleEnemyShips(user_uid):
+            toAdd = (
+                game.enemyShipDict[game.board.ships[ind].id],
+                (int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
+                game.board.ships[ind].getFacingasValue()
+            )
+            visible_enemy_ships.append(toAdd)
         return jsonify(visible_enemy_ships), 200 
     
     @app.route("/api/v1/graphics_get_damaged_squares", methods=["POST"])
@@ -357,7 +376,15 @@ def create_app() -> Flask:
         
         damaged_squares: list[tuple[int, int]] = []
 
-        # todo
+        for ind in game.getVisibleFriendlyShips(user_uid):
+            damagedCoords = game.board.ships[ind].getDamagedCoords()
+            for coords in damagedCoords:
+                damaged_squares.append((coords[0], coords[1]))
+        visibleTiles = game.getAllVisibleTiles(user_uid)
+        for ind in game.getAllVisibleEnemyShips(user_uid):
+            damagedCoords = [coords for coords in game.board.ships[ind].getDamagedCoords() if coords in visibleTiles]
+            for coords in damagedCoords:
+                damaged_squares.append((int(coords[0]), int(coords[1])))
 
         return jsonify(damaged_squares), 200 
     
@@ -374,7 +401,9 @@ def create_app() -> Flask:
         
         hidden_cells: list[tuple[int, int]] = []
 
-        # todo
+        hiddenCells = game.getAllHiddenTiles(user_uid)
+        for cell in hiddenCells:
+            hidden_cells.append((int(cell[0]), int(cell[1])))
 
         return jsonify(hidden_cells), 200 
     
@@ -391,7 +420,9 @@ def create_app() -> Flask:
         
         visible_cells: list[tuple[int, int]] = []
 
-        # todo
+        visibleCells = game.getAllVisibleTiles(user_uid)
+        for cell in visibleCells:
+            visible_cells.append((int(cell[0]), int(cell[1])))
 
         return jsonify(visible_cells), 200 
     
@@ -415,19 +446,22 @@ def create_app() -> Flask:
         data: dict[
             'ship_index': int
             ] = request.get_json()
-
-        # todo
+        
+        firableTiles = game.getFirableTiles(data['ship_index'])
+        for item in firableTiles:
+            possible_attacks.append((item[0], item[1]))
 
         return jsonify(possible_attacks), 200 
+    
+
+    @app.route("/assets/<path:filename>")
+    def download_asset(filename):
+        return send_from_directory(assets_src_path, filename, as_attachment=False)
 
 
     
     return app
     
-
-
-    
-    return app
 
 
 

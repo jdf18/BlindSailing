@@ -4,8 +4,7 @@ from enum import Enum
 
 from user_manager import UserManager, User
 
-class Game:
-    pass
+from map import Game
 
 class GamesManager:
     class Lobby:
@@ -62,9 +61,9 @@ class GamesServer:
         self.user_manager = UserManager()
         self.games_manager = GamesManager()
 
-    def start_lobby(self) -> GamesManager.Lobby:
+    def start_lobby(self, playerID) -> GamesManager.Lobby:
         lobby_uid = self.games_manager.generate_lobby_uid()
-        game = Game() # todo 
+        game = Game(playerID)
 
         for i in range(len(self.games_manager.game_servers)):
             if self.games_manager.game_servers[i] == None:

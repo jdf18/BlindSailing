@@ -8,13 +8,15 @@ ROT90 = np.array([[0, -1], [1, 0]])
 class Board:
     def __init__(self, gridSize: np.array):
         self.gridSize = gridSize
-        self.ships = []
+        self.ships: list[ships.Ship] = []
         self.grid = [[None for i in range(gridSize[0])] for i in range(gridSize[1])]
     
     def addShip(self, ship: ships.Ship) -> int:
         for coord in ship.getCoords():
             if self.indexGrid(coord) != None:
                 raise ValueError("Cannot place a ship in an occupied position")
+            if (coord[0] >= self.gridSize[0] or coord[1] >= self.gridSize[1]) or (coord[0] < 0 or coord[1] < 0):
+                raise ValueError("Cannot place ship out of bounds")
         self.ships.append(ship)
         for coord in ship.getCoords():
             self.updateGrid(coord, len(self.ships) - 1)
@@ -36,11 +38,11 @@ class Board:
         coords = self.ships[index].getCoords()
         for i in range(len(coords)):
             coord = coords[i] + shipFacing * dist
-            if coord[0] >= self.gridSize[0] or coord[1] >= self.gridSize[1]:
+            if coord[0] >= self.gridSize[0] or coord[1] >= self.gridSize[1] or coord[0] < 0 or coord[1] < 0:
                 return False
             val = self.indexGrid(coord)
             if val != None and val != index:
-                return 
+                return False
         return True
 
     def moveShip(self, index: int, dist: int):
@@ -62,7 +64,7 @@ class Board:
             for x in range(len(coords)):
                 coords[x] = np.matmul(ROT90, (coords[x] - shipCentre)) + shipCentre
         for coord in coords:
-            if coord[0] >= self.gridSize[0] or coord[1] >= self.gridSize[1]:
+            if coord[0] >= self.gridSize[0] or coord[1] >= self.gridSize[1] or coord[0] < 0 or coord[1] < 0:
                 return False
         for coord in coords:
             val = self.indexGrid(coord)
@@ -141,6 +143,8 @@ class Board:
                     break
         return visible
     
+
+    
     def getVisibleFriendlyShips(self, team: int) -> list[int]:
         visible = []
         for i in range(len(self.ships)):
@@ -163,26 +167,79 @@ class Board:
         return invisible
 
 
-    def getVisibleTilesTuple(self, index: int) -> tuple[map[tuple[int, int]], map[tuple[int, int]]]:
+    def getVisibleTilesTuple(self, index: int) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
         visibleTiles, invisibleTiles = self.getVisibleTiles(index)
         return map(tuple, visibleTiles), map(tuple, invisibleTiles)
 
 
 class Game:
-    def __init__(self):
-        self.board = Board(np.array([30, 30]))
+    def __init__(self, p1ID: int):
+        self.board = Board(np.array([50, 30]))
         self.p1Ships = []
         self.p2Ships = []
-        self.p1Ships.append(self.board.addShip(ships.AirCarrier(np.array([4, 28]), np.array([1, 0]), 1)))
-        self.p1Ships.append(self.board.addShip(ships.Battleship(np.array([3, 26]), np.array([1, 0]), 1)))
-        self.p1Ships.append(self.board.addShip(ships.Cruiser(np.array([2, 24]), np.array([1, 0]), 1)))
-        self.p1Ships.append(self.board.addShip(ships.Submarine(np.array([2, 22]), np.array([1, 0]), 1)))
-        self.p1Ships.append(self.board.addShip(ships.Destroyer(np.array([1, 20]), np.array([1, 0]), 1)))
-        self.p2Ships.append(self.board.addShip(ships.AirCarrier(np.array([25, 28]), np.array([-1, 0]), 2)))
-        self.p2Ships.append(self.board.addShip(ships.Battleship(np.array([26, 26]), np.array([-1, 0]), 2)))
-        self.p2Ships.append(self.board.addShip(ships.Cruiser(np.array([27, 24]), np.array([-1, 0]), 2)))
-        self.p2Ships.append(self.board.addShip(ships.Submarine(np.array([27, 22]), np.array([-1, 0]), 2)))
-        self.p2Ships.append(self.board.addShip(ships.Destroyer(np.array([28, 20]), np.array([-1, 0]), 2)))
+        self.p1Ships.append(self.board.addShip(ships.AirCarrier(np.array([4, 8]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Battleship(np.array([3, 6]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Cruiser(np.array([2, 4]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Submarine(np.array([2, 2]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Destroyer(np.array([1, 0]), np.array([1, 0]), p1ID)))
+        self.p2Ships.append(self.board.addShip(ships.AirCarrier(np.array([10, 8]), np.array([-1, 0]), None)))
+        self.p2Ships.append(self.board.addShip(ships.Battleship(np.array([10, 6]), np.array([-1, 0]), None)))
+        self.p2Ships.append(self.board.addShip(ships.Cruiser(np.array([10, 4]), np.array([-1, 0]), None)))
+        self.p2Ships.append(self.board.addShip(ships.Submarine(np.array([10, 2]), np.array([-1, 0]), None)))
+        self.p2Ships.append(self.board.addShip(ships.Destroyer(np.array([10, 0]), np.array([-1, 0]), None)))
+        self.turn = p1ID
+        self.players = [p1ID, None]
+        self.movedShips = []
+        self.playerShipDict = {
+            "AirCarrier": "airCarrier-0.png",
+            "Battleship": "battleship-0.png",
+            "Cruiser": "cruiser-0.png",
+            "Submarine": "submarine-0.png",
+            "Destroyer": "destroyer-0.png"
+        }
+        self.enemyShipDict = {
+            "AirCarrier": "airCarrier-1.png",
+            "Battleship": "battleship-1.png",
+            "Cruiser": "cruiser-1.png",
+            "Submarine": "submarine-1.png",
+            "Destroyer": "destroyer-1.png"
+        }
+
+    def start(self, p2ID):
+        self.players[1] = p2ID
+        for ind in self.p2Ships:
+            self.board.ships[ind].team = p2ID
+    
+    def logMove(self, index: int):
+        self.movedShips.append(index)
+    
+    def startTurn(self, playerID):
+        self.turn = playerID
+        self.movedShips = []
+
+    def changeTurnifFinished(self, playerID):
+        
+        if playerID == self.players[0]:
+            if not len(self.movedShips) == len(self.p1Ships):
+                return
+            self.startTurn(self.players[1])
+        if playerID == self.players[1]:
+            if not len(self.movedShips) == len(self.p2Ships):
+                return
+            self.startTurn(self.players[0])
+
+
+    def getUnmovedShips(self, playerID):
+        if playerID == self.players[0]:
+            return [ind for ind in self.p1Ships if ind not in self.movedShips]
+        elif playerID == self.players[1]:
+            return [ind for ind in self.p2Ships if ind not in self.movedShips]
+    
+    def getPlayerIndex(self, shipIndex, playerID):
+        if playerID == self.player[0]:
+            return self.p1Ships.index(shipIndex)
+        if playerID == self.player[1]:
+            return self.p2Ships.index(shipIndex)
     def addShip(self, ship: ships.Ship) -> int:
         return self.board.addShip(ship)
     def moveShip(self, index: int, dist: int):
@@ -199,15 +256,15 @@ class Game:
         return self.board.getVisibleEnemyShips(index)
     def getVisibleFriendlyShips(self, team: int) -> list[int]:
         return self.board.getVisibleFriendlyShips(team)
-    def getVisibleTilesTuple(self, index: int) -> tuple[map[tuple[int, int]], map[tuple[int, int]]]:
+    def getVisibleTilesTuple(self, index: int) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
         return self.board.getVisibleTilesTuple(index)
     
     def hasWon(self, team):
-        if team == 1:
+        if team == self.players[0]:
             for ship in self.p2Ships:
                 if not ship.isDead():
                     return False
-        elif team == 2:
+        elif team == self.players[1]:
             for ship in self.p1Ships:
                 if not ship.isDead():
                     return False
@@ -215,3 +272,60 @@ class Game:
     
     def getGridSize(self):
         return self.board.gridSize
+    
+    def getPlayerTurn(self):
+        return self.turn
+    
+    def isPlayerTurn(self, playerID):
+        return playerID == self.turn
+    
+    def getShipIndex(self, playerID, playerIndex):
+        if playerID == self.players[0]:
+            return self.p1Ships[playerIndex]
+        elif playerID == self.player[1]:
+            return self.p2Ships[playerIndex]
+        raise ValueError("Invalid player ID")
+    
+    def hasFinished(self):
+        return self.hasWon(self.players[0]) or self.hasWon(self.players[1])
+    
+    def getAllVisibleEnemyShips(self, playerID: int) -> set:
+        if playerID == self.players[0]:
+            totalSet = set()
+            for ind in self.p1Ships:
+                totalSet |= set(tuple(self.getVisibleEnemyShips(ind)))
+            return totalSet
+        if playerID == self.players[1]:
+            totalSet = set()
+            for ind in self.p2Ships:
+                totalSet |= set(tuple(self.getVisibleEnemyShips(ind)))
+            return totalSet
+        raise ValueError("PlayerID does not correspond to a player.")
+    
+    def getAllVisibleTiles(self, playerID: int) -> set:
+        allTiles = set()
+        if playerID == self.players[0]:
+            for ind in self.p1Ships:
+                allTiles |= set(self.getVisibleTilesTuple(ind)[0])
+            return allTiles
+        if playerID == self.players[1]:
+            for ind in self.p2Ships:
+                allTiles |= set(self.getVisibleTilesTuple(ind)[0])
+            return allTiles
+        raise ValueError("PlayerID does not correspond to a player.")
+    
+    def getAllHiddenTiles(self, playerID: int) -> set:
+        allTiles = set()
+        if playerID == self.players[0]:
+            for ind in self.p1Ships:
+                allTiles |= set(self.getVisibleTilesTuple(ind)[1])
+            return allTiles
+        if playerID == self.players[1]:
+            for ind in self.p2Ships:
+                allTiles |= set(self.getVisibleTilesTuple(ind)[1])
+            return allTiles
+        raise ValueError("PlayerID does not correspond to a player.")
+    
+    def getFirableTiles(self, index: int) -> list[np.array]:
+        return self.board.getFirableTiles(index)
+    

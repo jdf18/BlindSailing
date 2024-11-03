@@ -1,36 +1,126 @@
-function render() {
+let client_turn_interval = null;
+let wait_for_opponent_interval = null;
+const airCarrier_0 = new Image();
+airCarrier_0.src = "/assets/airCarrier-0.png";
+const airCarrier_1 = new Image();
+airCarrier_1.src = "/assets/airCarrier-1.png";
+const battleship_0 = new Image();
+battleship_0.src = "/assets/battleship-0.png";
+const battleship_1 = new Image();
+battleship_1.src = "/assets/battleship-1.png";
+const cruiser_0 = new Image();
+cruiser_0.src = "/assets/cruiser-0.png";
+const cruiser_1 = new Image();
+cruiser_1.src = "/assets/cruiser-1.png";
+const destroyer_0 = new Image();
+destroyer_0.src = "/assets/destroyer-0.png";
+const destroyer_1 = new Image();
+destroyer_1.src = "/assets/destroyer-1.png";
+const submarine_0 = new Image();
+submarine_0.src = "/assets/submarine-0.png";
+const submarine_1 = new Image();
+submarine_1.src = "/assets/submarine-1.png";
+const explosion = new Image();
+explosion.src = "/assets/explosion.png";
+const fog = new Image();
+fog.src = "/assets/fog.png";
+const sea = new Image();
+sea.src = "/assets/sea.png";
+
+function poll_while_waiting_for_opponent() {
+    clearInterval(client_turn_interval);
+    if (wait_for_opponent_interval) return;
+
+    wait_for_opponent_interval = setInterval(async () => {
+        try {
+            let has_finished = await api_has_game_finished();
+            if (has_finished) {
+                if (await api_is_winner()) {
+                    alert("You won");
+                } else {
+                    alert("You lost");
+                }
+            }
+
+            let is_my_turn = await api_is_my_turn();
+            if (is_my_turn) {
+                console.log("It is now the clients turn");
+                clearInterval(wait_for_opponent_interval);
+                wait_for_opponent_interval = null;
+                poll_while_client_turn();
+            }
+        } catch (error) {
+            console.error("Error polling for player status:", error);
+        }
+    }, 1000)
+}
+
+function poll_while_client_turn() {
+    clearInterval(wait_for_opponent_interval);
+    if (client_turn_interval) return;
+
+    activate_user_input();
+
+    client_turn_interval = setInterval(async () => {
+        try {
+            let availiable_ships = await api_get_available_ships();
+            if (availiable_ships.length <= 0) {
+                deactivate_user_input();
+
+                console.log("It is now the clients turn");
+                clearInterval(wait_for_opponent_interval);
+                wait_for_opponent_interval = null;
+                poll_while_client_turn();
+            }
+        } catch (error) {
+            console.error("Error polling for player status:", error);
+        }
+    }, 1000)
+}
+
+
+is_user_input_activated = false;
+
+function activate_user_input() {
+    is_user_input_activated = true
+}
+
+function deactivate_user_input() {
+    is_user_input_activated = false
+}
+
+async function render() {
     const canvas = document.getElementById("grid");
     const ctx = canvas.getContext("2d");
-    define_images();
 
     ctx.fillStyle = "#3f3f3f";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const visibleCells = get_visible_cells();
+    const visibleCells = await api_get_visible_cells();
     for (let i=0; i<visibleCells.length; i++) {
         let coord = coord_to_pos(visibleCells[i], 0);
         ctx.drawImage(sea, coord[0], coord[1]);
     };
 
-    const enemyShips = get_visible_enemy_ships();
+    const enemyShips = await api_get_visible_enemy_ships();
     for (let i=0; i<enemyShips.length; i++) {
         let coord = coord_to_pos(enemyShips[i][1], enemyShips[i][2]);
         ctx.drawImage(get_img(enemyShips[i][0]), coord[0], coord[1]);
     };
 
-    const hiddenCells = get_hidden_cells();
+    const hiddenCells = await api_get_hidden_cells();
     for (let i=0; i<hiddenCells.length; i++) {
         let coord = coord_to_pos(hiddenCells[i], 0);
         ctx.drawImage(fog, coord[0], coord[1]);
     };
 
-    const friendlyShips = get_visible_friendly_ships();
+    const friendlyShips = await api_get_visible_friendly_ships();
     for (let i=0; i<friendlyShips.length; i++) {
         let coord = coord_to_pos(friendlyShips[i][1], friendlyShips[i][2]);
         ctx.drawImage(get_img(friendlyShips[i][0]), coord[0], coord[1]);
     };
 
-    const damagedCells = get_damaged_squares();
+    const damagedCells = await api_get_damaged_squares();
     for (let i=0; i<damagedCells.length; i++) {
         let coord = coord_to_pos(damagedCells[i], 0);
         ctx.drawImage(explosion, coord[0], coord[1]);
@@ -39,32 +129,32 @@ function render() {
 
 function define_images() {
     const airCarrier_0 = new Image();
-    airCarrier_0.src = "/../../assets/airCarrier-0.png";
+    airCarrier_0.src = "/assets/airCarrier-0.png";
     const airCarrier_1 = new Image();
-    airCarrier_1.src = "/../../assets/airCarrier-1.png";
+    airCarrier_1.src = "/assets/airCarrier-1.png";
     const battleship_0 = new Image();
-    battleship_0.src = "/../../assets/battleship-0.png";
+    battleship_0.src = "/assets/battleship-0.png";
     const battleship_1 = new Image();
-    battleship_1.src = "/../../assets/battleship-1.png";
+    battleship_1.src = "/assets/battleship-1.png";
     const cruiser_0 = new Image();
-    cruiser_0.src = "/../../assets/cruiser-0.png";
+    cruiser_0.src = "/assets/cruiser-0.png";
     const cruiser_1 = new Image();
-    cruiser_1.src = "/../../assets/cruiser-1.png";
+    cruiser_1.src = "/assets/cruiser-1.png";
     const destroyer_0 = new Image();
-    destroyer_0.src = "/../../assets/destroyer-0.png";
+    destroyer_0.src = "/assets/destroyer-0.png";
     const destroyer_1 = new Image();
-    destroyer_1.src = "/../../assets/destroyer-1.png";
+    destroyer_1.src = "/assets/destroyer-1.png";
     const submarine_0 = new Image();
-    submarine_0.src = "/../../assets/submarine-0.png";
+    submarine_0.src = "/assets/submarine-0.png";
     const submarine_1 = new Image();
-    submarine_1.src = "/../../assets/submarine-1.png";
+    submarine_1.src = "/assets/submarine-1.png";
 
     const explosion = new Image();
-    explosion.src = "/../../assets/explosion.png";
+    explosion.src = "/assets/explosion.png";
     const fog = new Image();
-    fog.src = "/../../assets/explosion.png";
+    fog.src = "/assets/explosion.png";
     const sea = new Image();
-    sea.src = "/../../assets/explosion.png";
+    sea.src = "/assets/explosion.png";
 };
 
 function get_img(filename) {
@@ -94,7 +184,7 @@ function get_img(filename) {
     };
 };
 
-function coords_to_pos(coord, rotation) {
+function coord_to_pos(coord, rotation) {
     if (rotation == 0) {
         return [16*coord[0]+1, 16*coord[1]+2];
     } else if (rotation == 1) {
