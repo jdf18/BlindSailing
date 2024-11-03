@@ -23,9 +23,9 @@ submarine_1.src = "/assets/submarine-1.png";
 const explosion = new Image();
 explosion.src = "/assets/explosion.png";
 const fog = new Image();
-fog.src = "/assets/explosion.png";
+fog.src = "/assets/fog.png";
 const sea = new Image();
-sea.src = "/assets/explosion.png";
+sea.src = "/assets/sea.png";
 
 function poll_while_waiting_for_opponent() {
     clearInterval(client_turn_interval);
