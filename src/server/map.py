@@ -169,7 +169,6 @@ class Board:
 
     def getVisibleTilesTuple(self, index: int) -> tuple[tuple[tuple[int, int]], tuple[tuple[int, int]]]:
         visibleTiles, invisibleTiles = self.getVisibleTiles(index)
-        print(invisibleTiles)
         return (tuple(tile) for tile in visibleTiles), (tuple(tile) for tile in invisibleTiles)
 
 
@@ -316,14 +315,18 @@ class Game:
         raise ValueError("PlayerID does not correspond to a player.")
     
     def getAllHiddenTiles(self, playerID: int) -> set:
-        allTiles = set()
         if playerID == self.players[0]:
-            for ind in self.p1Ships:
+            if len(self.p1Ships) == 0:
+                return set()
+            allTiles = set(self.getVisibleTilesTuple(self.p1Ships[0])[1])
+            for ind in self.p1Ships[1:]:
                 allTiles &= set(self.getVisibleTilesTuple(ind)[1])
-            print(allTiles)
             return allTiles
         if playerID == self.players[1]:
-            for ind in self.p2Ships:
+            if len(self.p2Ships) == 0:
+                return set()
+            allTiles = set(self.getVisibleTilesTuple(self.p2Ships[0])[1])
+            for ind in self.p2Ships[1:]:
                 allTiles &= set(self.getVisibleTilesTuple(ind)[1])
             return allTiles
         raise ValueError("PlayerID does not correspond to a player.")
