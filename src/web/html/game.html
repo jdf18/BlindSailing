@@ -9,7 +9,6 @@
 <body>
     <div class="main-container">
         <div class="board-container">
-            <h2>Board</h2>
             <canvas id="grid" width="801" height="481"></canvas>            
         </div>
 
@@ -18,6 +17,20 @@
 
         <div class="controls-container">
             <h2>Controls</h2>
+            <p>
+                <button>&#8592</button>
+                <img class="pixel" src="{{ url_for('static', filename='/img/airCarrier-0.png')}}" height="64" width="auto">
+                <button>&#8594</button>
+            </p>
+            <p>
+                <button>Move</button>
+                <button>Left</button>
+                <button>Right</button>
+                <button>Fire</button>
+            </p>
+            <p>
+                <button>Submit</button>
+            </p>
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/client.js')}}"></script>
