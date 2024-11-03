@@ -338,3 +338,12 @@ class Game:
     def isPlayerOne(self, playerID: int) -> bool:
         return playerID == self.players[0]
     
+    def getShipData(self, index: int) -> dict["filename":str, "is_dead":bool]:
+        fname = ""
+        if self.board.ships[index] == self.players[0]:
+            fname = self.playerShipDict[self.board.ships[index].id]
+        elif self.board.ships[index] == self.players[1]:
+            fname = self.enemyShipDict[self.board.ships[index].id]
+
+        return {"filename":fname, "is_dead":self.board.ships[index].isDead()}
+    

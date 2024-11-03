@@ -452,7 +452,7 @@ def create_app() -> Flask:
             'ship_index': int
             ] = request.get_json()
         
-        firableTiles = game.getFirableTiles(data['ship_index'])
+        firableTiles = game.getFirableTiles(game.getShipIndex(data['ship_index']))
         for item in firableTiles:
             possible_attacks.append((item[0], item[1]))
 
@@ -472,7 +472,32 @@ def create_app() -> Flask:
         if not request.is_json:
             return 'None', 400
 
-        return jsonify(game.isPlayerOne(user_uid)), 200 
+        return jsonify({'is_player_one':game.isPlayerOne(user_uid)}), 200 
+    
+    @app.route("/api/v1/api_get_ship_data", methods=["POST"])
+    def api_get_ship_data():
+        require_connection()
+        user_uid = session['login_uid']
+        user: User = server.user_manager.users[user_uid]
+        lobby: GamesManager.Lobby = list(filter(
+            lambda x:x.lobby_uid==user.current_lobby, 
+            server.games_manager.lobby_uids
+            ))[0]
+        game = server.games_manager.game_servers[lobby.game_index]
+        
+        ship_data: dict["filename":str, "is_dead":bool]
+
+        if not request.is_json:
+            return 'None', 400
+        success: bool = False
+
+        data: dict[
+            'ship_index': int
+            ] = request.get_json()
+        
+
+        return jsonify(game.getShipData(game.getShipIndex)), 200 
+        
     
 
     @app.route("/assets/<path:filename>")
