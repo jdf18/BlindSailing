@@ -89,13 +89,14 @@ const sea = new Image();
 sea.src = "/assets/sea.png";
 
 //From https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
-let canv = document.getElementByID("grid");
+let canv = document.getElementById("grid");
 canv.addEventListener('click', event => {
     let bound = canv.getBoundingClientRect();
     let x = event.clientX - bound.left - canv.clientLeft;
     let y = event.clientY - bound.top - canv.clientTop;
     let ctx = canv.getContext("2d");
     ctx.fillRect(x, y, 16, 16)
+    console.log("clicked at", x, y)
 });
 
 
