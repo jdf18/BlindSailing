@@ -53,6 +53,9 @@ class Ship:
     def getDamagedCoords(self):
         coords = self.getCoords()
         return [coords[i] for i in range(len(coords)) if self.hitSections[i]]
+    
+    def getTopLeft(self):
+        return max(self.getCoords(), key=lambda x: int(x[0]) + int(x[1]))
 
 
 # 5-long

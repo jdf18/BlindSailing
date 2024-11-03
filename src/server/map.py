@@ -124,9 +124,9 @@ class Board:
             for x in range(self.gridSize[0]):
                 arr = np.array([x, y])
                 if self.getDist(arr, centre) <= ship.viewRadius:
-                    visibleTiles.append(arr)
+                    visibleTiles.append(tuple(arr))
                 else:
-                    invisibleTiles.append(arr)
+                    invisibleTiles.append(tuple(arr))
         return visibleTiles, invisibleTiles
 
     def getVisibleEnemyShips(self, index: int) -> list[int]:
@@ -167,9 +167,9 @@ class Board:
         return invisible
 
 
-    def getVisibleTilesTuple(self, index: int) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
+    def getVisibleTilesTuple(self, index: int) -> tuple[tuple[tuple[int, int]], tuple[tuple[int, int]]]:
         visibleTiles, invisibleTiles = self.getVisibleTiles(index)
-        return map(tuple, visibleTiles), map(tuple, invisibleTiles)
+        return (tuple(tile) for tile in visibleTiles), (tuple(tile) for tile in invisibleTiles)
 
 
 class Game:
@@ -217,13 +217,14 @@ class Game:
         self.turn = playerID
         self.movedShips = []
 
-    def changeTurnifFinished(self, playerID):
-        
-        if playerID == self.players[0]:
+    def changeTurnifFinished(self):
+        if self.turn == self.players[0]:
+            no_of_alive_ships = len(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p1Ships)))
             if not len(self.movedShips) == len(self.p1Ships):
                 return
             self.startTurn(self.players[1])
-        if playerID == self.players[1]:
+        if self.turn == self.players[1]:
+            no_of_alive_ships = len(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p2Ships)))
             if not len(self.movedShips) == len(self.p2Ships):
                 return
             self.startTurn(self.players[0])
@@ -315,14 +316,19 @@ class Game:
         raise ValueError("PlayerID does not correspond to a player.")
     
     def getAllHiddenTiles(self, playerID: int) -> set:
-        allTiles = set()
         if playerID == self.players[0]:
-            for ind in self.p1Ships:
-                allTiles |= set(self.getVisibleTilesTuple(ind)[1])
+            if len(self.p1Ships) == 0:
+                return set()
+            allTiles = set(self.getVisibleTilesTuple(self.p1Ships[0])[1])
+            for ind in self.p1Ships[1:]:
+                allTiles &= set(self.getVisibleTilesTuple(ind)[1])
             return allTiles
         if playerID == self.players[1]:
-            for ind in self.p2Ships:
-                allTiles |= set(self.getVisibleTilesTuple(ind)[1])
+            if len(self.p2Ships) == 0:
+                return set()
+            allTiles = set(self.getVisibleTilesTuple(self.p2Ships[0])[1])
+            for ind in self.p2Ships[1:]:
+                allTiles &= set(self.getVisibleTilesTuple(ind)[1])
             return allTiles
         raise ValueError("PlayerID does not correspond to a player.")
     

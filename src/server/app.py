@@ -189,6 +189,7 @@ def create_app() -> Flask:
             game.shootFromShip(game.getShipIndex(data['ship_index']), np.asarray(data['position']))
             success = True
             game.logMove(game.getShipIndex(data['ship_index']))
+            game.changeTurnifFinished()
         except ValueError:
             pass
         return jsonify({'success': success}), 200 
@@ -217,6 +218,7 @@ def create_app() -> Flask:
             game.moveShip(game.getShipIndex(data['ship_index']), data['count'])
             success = True
             game.logMove(game.getShipIndex(data['ship_index']))
+            game.changeTurnifFinished()
         except ValueError:
             pass
         return jsonify({'success': success}), 200 
@@ -248,6 +250,7 @@ def create_app() -> Flask:
                 game.rotateShip(game.getShipIndex(data['ship_index']), 1)
             success = True
             game.logMove(game.getShipIndex(data['ship_index']))
+            game.changeTurnifFinished()
         except ValueError:
             pass
 
@@ -355,9 +358,10 @@ def create_app() -> Flask:
             int]] = []
 
         for ind in game.getAllVisibleEnemyShips(user_uid):
+            pos = game.board.ships[ind].getTopLeft()
             toAdd = (
                 game.enemyShipDict[game.board.ships[ind].id],
-                (int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
+                (int(pos[0]), int(pos[1])),
                 game.board.ships[ind].getFacingasValue()
             )
             visible_enemy_ships.append(toAdd)
