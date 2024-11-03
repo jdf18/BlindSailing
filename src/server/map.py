@@ -124,9 +124,9 @@ class Board:
             for x in range(self.gridSize[0]):
                 arr = np.array([x, y])
                 if self.getDist(arr, centre) <= ship.viewRadius:
-                    visibleTiles.append(arr)
+                    visibleTiles.append(tuple(arr))
                 else:
-                    invisibleTiles.append(arr)
+                    invisibleTiles.append(tuple(arr))
         return visibleTiles, invisibleTiles
 
     def getVisibleEnemyShips(self, index: int) -> list[int]:
