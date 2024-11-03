@@ -90,6 +90,15 @@ sea.src = "/assets/sea.png";
 const selectedCell = new Image();
 selectedCell.src = "/assets/selectedCell.png";
 
+//From https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+let canv = document.getElementById("grid");
+canv.addEventListener('click', event => {
+    let bound = canv.getBoundingClientRect();
+    let x = event.clientX - bound.left - canv.clientLeft;
+    let y = event.clientY - bound.top - canv.clientTop;
+    coord = pos_to_coord([x, y]);
+});
+
 function poll_while_waiting_for_opponent() {
     clearInterval(client_turn_interval);
     if (wait_for_opponent_interval) return;
@@ -335,3 +344,7 @@ function render_fire() {
         ctx.drawImage(selectedCell, coord[0], coord[1]);
     };
 };
+
+function pos_to_coord(pos){
+    [pos[0] / 16, (pos[1] - 1) / 16]
+}
