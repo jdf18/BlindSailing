@@ -101,32 +101,32 @@ function render() {
 
 function define_images() {
     const airCarrier_0 = new Image();
-    airCarrier_0.src = "assets/airCarrier-0.png";
+    airCarrier_0.src = "/assets/airCarrier-0.png";
     const airCarrier_1 = new Image();
-    airCarrier_1.src = "assets/airCarrier-1.png";
+    airCarrier_1.src = "/assets/airCarrier-1.png";
     const battleship_0 = new Image();
-    battleship_0.src = "assets/battleship-0.png";
+    battleship_0.src = "/assets/battleship-0.png";
     const battleship_1 = new Image();
-    battleship_1.src = "assets/battleship-1.png";
+    battleship_1.src = "/assets/battleship-1.png";
     const cruiser_0 = new Image();
-    cruiser_0.src = "assets/cruiser-0.png";
+    cruiser_0.src = "/assets/cruiser-0.png";
     const cruiser_1 = new Image();
-    cruiser_1.src = "assets/cruiser-1.png";
+    cruiser_1.src = "/assets/cruiser-1.png";
     const destroyer_0 = new Image();
-    destroyer_0.src = "assets/destroyer-0.png";
+    destroyer_0.src = "/assets/destroyer-0.png";
     const destroyer_1 = new Image();
-    destroyer_1.src = "assets/destroyer-1.png";
+    destroyer_1.src = "/assets/destroyer-1.png";
     const submarine_0 = new Image();
-    submarine_0.src = "assets/submarine-0.png";
+    submarine_0.src = "/assets/submarine-0.png";
     const submarine_1 = new Image();
-    submarine_1.src = "assets/submarine-1.png";
+    submarine_1.src = "/assets/submarine-1.png";
 
     const explosion = new Image();
-    explosion.src = "assets/explosion.png";
+    explosion.src = "/assets/explosion.png";
     const fog = new Image();
-    fog.src = "assets/explosion.png";
+    fog.src = "/assets/explosion.png";
     const sea = new Image();
-    sea.src = "assets/explosion.png";
+    sea.src = "/assets/explosion.png";
 };
 
 function get_img(filename) {

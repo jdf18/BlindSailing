@@ -7,6 +7,7 @@ from game_server import GamesServer, GamesManager
 
 
 def create_app() -> Flask:
+    assets_src_path = path.abspath("src/assets")
     web_src_path = path.abspath("src/web")
     app = Flask(__name__, 
                 template_folder=web_src_path,
@@ -453,9 +454,9 @@ def create_app() -> Flask:
         return jsonify(possible_attacks), 200 
     
 
-    @app.route("/<path:filename>")
+    @app.route("/assets/<path:filename>")
     def download_asset(filename):
-        return send_from_directory(app.config(['STATIC_FOLDER'], filename, as_attachment=False))
+        return send_from_directory(assets_src_path, filename, as_attachment=False)
 
 
     
