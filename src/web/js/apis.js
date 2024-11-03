@@ -190,7 +190,6 @@ async function api_get_available_ships(){
 
 async function api_get_grid_size(){
     // Returns: [Int x, Int y]
-
     try{
         const response = await fetch('/api/v1/graphics_get_grid_size',{
             method: 'POST',
@@ -226,7 +225,6 @@ async function api_get_visible_friendly_ships(){
 
 async function api_get_visible_enemy_ships(){
     // Returns: List[ (String filename, [Int x, Int y], Int rotation) ]  
-
     try{
         const response = await fetch('/api/v1/graphics_get_visible_enemy_ships',{
             method: 'POST',
@@ -244,7 +242,6 @@ async function api_get_visible_enemy_ships(){
 
 async function api_get_damaged_squares(){
     // Returns: List[ (Int x, Int y) ]
-
     try{
         const response = await fetch('/api/v1/graphics_get_damaged_squares',{
             method: 'POST',
@@ -282,7 +279,7 @@ async function api_get_possible_attacks(ship_index){
     // Returns: List[ (Int x, Int y) ]
 
     try{
-        const response = await fetch('/api/v1/graphics_get_possible_attack',{
+        const response = await fetch('/api/v1/graphics_get_possible_attacks',{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -303,7 +300,7 @@ async function api_get_possible_attacks(ship_index){
 
 async function api_get_visible_cells() {
     // Returns: List[ (Int x, Int y) ]
-
+  
     try{
         const response = await fetch('/api/v1/graphics_get_visible_cells',{
             method: 'POST',

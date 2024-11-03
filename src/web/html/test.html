@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Blind Sailing</title>
+        <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">-->
+        <style>
+            .flex {
+                display: flex;
+            }
+            .flex > div {
+                flex-grow: 1;
+            }
+            @media screen and (max-width:768px) {
+                .flex {
+                    flex-direction: column;
+                }
+            }
+            img.pixel {
+                image-rendering: pixelated
+            }
+        </style>
+    </head>
+    <body>
+        <div class="flex">
+            <div>
+                <canvas id="myCanvas" width="801" height="481"></canvas>
+                <script>
+                    var c = document.getElementById("myCanvas");
+                    var ctx = c.getContext("2d");
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(800, 480);
+                    ctx.stroke();
+                </script> 
+            </div>
+            <div>
+                <p>
+                    <button>&#8592</button>
+                    <img class="pixel" src="../../assets/airCarrier-0.png" height="64" width="auto"/>
+                    <button>&#8594</button>
+                </p>
+                <p>
+                    <button>Move</button>
+                    <button>Left</button>
+                    <button>Right</button>
+                    <button>Fire</button>
+                </p>
+                <p>
+                    <button>Submit</button>
+                </p>
+            </div>
+        </div>
+    </body>
+</html>
