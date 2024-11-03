@@ -299,7 +299,7 @@ def create_app() -> Flask:
 
         available_ships: list = game.getUnmovedShips(user_uid)
         for i in range(len(available_ships)):
-            available_ships[i] = game.getPlayerIndex(available_ships[i])
+            available_ships[i] = game.getPlayerIndex(available_ships[i], user_uid)
         return jsonify(available_ships), 200 
     
     @app.route("/api/v1/graphics_get_grid_size", methods=["POST"])
