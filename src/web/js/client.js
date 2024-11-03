@@ -1,5 +1,10 @@
 let client_turn_interval = null;
 let wait_for_opponent_interval = null;
+
+let currently_selected_ship = null;
+let choose_fire_square = false;
+
+
 const airCarrier_0_N = new Image();
 airCarrier_0_N.src = "/assets/n-airCarrier-0.png";
 const airCarrier_0_S = new Image();
@@ -87,15 +92,6 @@ const fog = new Image();
 fog.src = "/assets/fog.png";
 const sea = new Image();
 sea.src = "/assets/sea.png";
-
-//From https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
-let canv = document.getElementById("grid");
-canv.addEventListener('click', event => {
-    let bound = canv.getBoundingClientRect();
-    let x = event.clientX - bound.left - canv.clientLeft;
-    let y = event.clientY - bound.top - canv.clientTop;
-    coord = pos_to_coord([x, y]);
-});
 
 function poll_while_waiting_for_opponent() {
     clearInterval(client_turn_interval);
@@ -196,28 +192,6 @@ async function render() {
         ctx.drawImage(explosion, coord[0], coord[1]);
     };
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function get_img(filename, rotation) {
@@ -337,4 +311,49 @@ function coord_to_pos(coord, rotation) {
 
 function pos_to_coord(pos){
     [pos[0] / 16, (pos[1] - 1) / 16]
+}
+
+
+async function on_button_move() {
+    if (is_user_input_activated) {
+        await api_move(currently_selected_ship, 1);
+    }
+}
+
+async function on_button_rotate(anti_clockwise) {
+    if (is_user_input_activated) {
+        await api_rotate(currently_selected_ship, anti_clockwise);
+    }
+}
+
+function on_button_fire() {
+    if (is_user_input_activated) {
+        render_fire();
+        choose_fire_square = true;
+    }
+}
+
+//From https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+let canv = document.getElementById("grid");
+canv.addEventListener('click', event => {
+    let bound = canv.getBoundingClientRect();
+    let x = event.clientX - bound.left - canv.clientLeft;
+    let y = event.clientY - bound.top - canv.clientTop;
+    coord = pos_to_coord([x, y]);
+
+    if (choose_fire_square) {
+        api_fire(currently_selected_ship, coord);
+        choose_fire_square = false;
+    }
+});
+
+function switch_current_ship(left) {
+    if (left) {
+        currently_selected_ship--;
+    } else {
+        currently_selected_ship++;
+    }
+
+    let x = api_get_available_ships();
+    currently_selected_ship %= x.length;
 }
