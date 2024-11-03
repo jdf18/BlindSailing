@@ -134,7 +134,7 @@ def create_app() -> Flask:
         user_uid = session['login_uid']
         user: User = server.user_manager.users[user_uid]
 
-        lobby = server.start_lobby()
+        lobby = server.start_lobby(user_uid)
         print("Starting lobby")
         user.current_lobby = lobby.lobby_uid
         lobby.players[0] = user_uid
@@ -187,6 +187,7 @@ def create_app() -> Flask:
         try:
             game.shootFromShip(game.getShipIndex(data['ship_index']), np.asarray(data['position']))
             success = True
+            game.logMove(game.getShipIndex(data['ship_index']))
         except ValueError:
             pass
         return jsonify({'success': success}), 200 
@@ -214,6 +215,7 @@ def create_app() -> Flask:
         try:
             game.moveShip(game.getShipIndex(data['ship_index']), data['count'])
             success = True
+            game.logMove(game.getShipIndex(data['ship_index']))
         except ValueError:
             pass
         return jsonify({'success': success}), 200 
@@ -244,6 +246,7 @@ def create_app() -> Flask:
             else:
                 game.rotateShip(game.getShipIndex(data['ship_index']), 1)
             success = True
+            game.logMove(game.getShipIndex(data['ship_index']))
         except ValueError:
             pass
 

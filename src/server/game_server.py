@@ -61,9 +61,9 @@ class GamesServer:
         self.user_manager = UserManager()
         self.games_manager = GamesManager()
 
-    def start_lobby(self) -> GamesManager.Lobby:
+    def start_lobby(self, playerID) -> GamesManager.Lobby:
         lobby_uid = self.games_manager.generate_lobby_uid()
-        game = Game()
+        game = Game(playerID)
 
         for i in range(len(self.games_manager.game_servers)):
             if self.games_manager.game_servers[i] == None:
