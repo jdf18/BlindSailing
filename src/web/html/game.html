@@ -10,14 +10,7 @@
     <div class="main-container">
         <div class="board-container">
             <h2>Board</h2>
-            <canvas id="grid" width="801" height="481"></canvas>
-            <script>
-            var c=document.getElementById("grid");
-            var ctx = c.getContext("2d");
-            ctx.moveTo(0, 0);
-            ctx.lineTo(800, 480);
-            ctx.stroke();
-            </script>            
+            <canvas id="grid" width="801" height="481"></canvas>            
         </div>
 
 
@@ -28,5 +21,6 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/client.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/apis.js')}}"></script>
 </body>
 </html>
