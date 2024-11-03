@@ -1,7 +1,7 @@
 let client_turn_interval = null;
 let wait_for_opponent_interval = null;
 
-let currently_selected_ship = null;
+let currently_selected_ship = 0;
 let choose_fire_square = false;
 
 
@@ -138,7 +138,7 @@ function poll_while_client_turn() {
                 console.log("It is now the clients turn");
                 clearInterval(wait_for_opponent_interval);
                 wait_for_opponent_interval = null;
-                poll_while_client_turn();
+                poll_while_waiting_for_opponent();
             }
         } catch (error) {
             console.error("Error polling for player status:", error);
@@ -328,19 +328,23 @@ async function on_button_move() {
     if (is_user_input_activated) {
         await api_move(currently_selected_ship, 1);
     }
+    render();await switch_current_ship(false);
 }
 
 async function on_button_rotate(anti_clockwise) {
     if (is_user_input_activated) {
         await api_rotate(currently_selected_ship, anti_clockwise);
     }
+    render();await switch_current_ship(false);
 }
 
-function on_button_fire() {
+async function on_button_fire() {
     if (is_user_input_activated) {
-        render_fire();
+        await render_fire();
         choose_fire_square = true;
     }
+
+    render();
 
 
 }
@@ -357,17 +361,30 @@ canv.addEventListener('click', event => {
         api_fire(currently_selected_ship, coord);
         choose_fire_square = false;
     }
+
+    render(); switch_current_ship(false);
 });
 
-function switch_current_ship(left) {
+async function switch_current_ship(left) {
+    let x = await api_get_available_ships();
+    let index = x.indexOf(currently_selected_ship)
     if (left) {
-        currently_selected_ship--;
+        currently_selected_ship = x[(index - 1) % x.length];
     } else {
-        currently_selected_ship++;
+        currently_selected_ship = x[(index + 1) % x.length];
     }
+    console.log(currently_selected_ship);
+    let y = await api_get_ship_details(currently_selected_ship);
 
-    let x = api_get_available_ships();
-    currently_selected_ship %= x.length;
+    const previewship = document.getElementById("previewship");
+    console.log(y);
+    previewship.src = ("/assets/e-" + y['filename'])
 }
 
-poll_while_client_turn();
+render();
+
+if (api_is_player_one()) {
+    poll_while_client_turn();
+} else {
+    poll_while_waiting_for_opponent();
+}

@@ -337,3 +337,25 @@ async function api_get_visible_cells() {
         console.error("Error:", error.message);
     }
 }
+
+async function api_get_ship_details(ship_index) {
+    // Returns: List[ (Int x, Int y) ]
+    try{
+        const response = await fetch('/api/v1/api_get_ship_data',{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ship_index: ship_index,
+            })
+        });
+        if (!response.ok){
+            throw new Error('Error when getting ship details');
+        }
+        const data = await response.json();
+        return data;
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+}

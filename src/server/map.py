@@ -3,6 +3,7 @@ import ships
 import math
 
 ROT90 = np.array([[0, -1], [1, 0]])
+ROT270 = np.array([[0, 1], [-1, 0]])
 
 #Main class storing the board state, includes lots of methods
 class Board:
@@ -55,26 +56,24 @@ class Board:
         for coord in self.ships[index].getCoords():
             self.updateGrid(coord, index)
     
-    def canRotateShip(self, index: int, times: int) -> bool:
+    def rotateShip(self, index: int, times: int):
         if self.ships[index].isDead():
-            return False
+            raise ValueError("cannot rotate ship")
         shipCentre = self.ships[index].getCentre()
         coords = self.ships[index].getCoords()
-        for i in range(times):
+        if times == 1:
             for x in range(len(coords)):
                 coords[x] = np.matmul(ROT90, (coords[x] - shipCentre)) + shipCentre
+        if times == 3:
+            for x in range(len(coords)):
+                coords[x] = np.matmul(ROT270, (coords[x] - shipCentre)) + shipCentre
         for coord in coords:
             if coord[0] >= self.gridSize[0] or coord[1] >= self.gridSize[1] or coord[0] < 0 or coord[1] < 0:
-                return False
+                raise ValueError("Cannot rotate ship")
         for coord in coords:
             val = self.indexGrid(coord)
             if val != None and val != index:
-                return False
-        return True
-    
-    def rotateShip(self, index: int, times: int):
-        if not self.canRotateShip(index, times):
-            raise ValueError("Cannot rotate ship.")
+                raise ValueError("Cannot rotate ship")
         coords = self.ships[index].getCoords()
         for coord in coords:
             self.updateGrid(coord, None)
@@ -219,12 +218,12 @@ class Game:
 
     def changeTurnifFinished(self):
         if self.turn == self.players[0]:
-            no_of_alive_ships = len(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p1Ships)))
+            no_of_alive_ships = len(list(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p1Ships))))
             if not len(self.movedShips) == len(self.p1Ships):
                 return
             self.startTurn(self.players[1])
         if self.turn == self.players[1]:
-            no_of_alive_ships = len(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p2Ships)))
+            no_of_alive_ships = len(list(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p2Ships))))
             if not len(self.movedShips) == len(self.p2Ships):
                 return
             self.startTurn(self.players[0])
@@ -237,9 +236,9 @@ class Game:
             return [ind for ind in self.p2Ships if ind not in self.movedShips]
     
     def getPlayerIndex(self, shipIndex, playerID):
-        if playerID == self.player[0]:
+        if playerID == self.players[0]:
             return self.p1Ships.index(shipIndex)
-        if playerID == self.player[1]:
+        if playerID == self.players[1]:
             return self.p2Ships.index(shipIndex)
     def addShip(self, ship: ships.Ship) -> int:
         return self.board.addShip(ship)
@@ -283,7 +282,7 @@ class Game:
     def getShipIndex(self, playerID, playerIndex):
         if playerID == self.players[0]:
             return self.p1Ships[playerIndex]
-        elif playerID == self.player[1]:
+        elif playerID == self.players[1]:
             return self.p2Ships[playerIndex]
         raise ValueError("Invalid player ID")
     
@@ -338,11 +337,11 @@ class Game:
     def isPlayerOne(self, playerID: int) -> bool:
         return playerID == self.players[0]
     
-    def getShipData(self, index: int) -> dict["filename":str, "is_dead":bool]:
+    def getShipData(self, index: int, user_uid) -> dict["filename":str, "is_dead":bool]:
         fname = ""
-        if self.board.ships[index] == self.players[0]:
+        if user_uid == self.players[0]:
             fname = self.playerShipDict[self.board.ships[index].id]
-        elif self.board.ships[index] == self.players[1]:
+        elif user_uid == self.players[1]:
             fname = self.enemyShipDict[self.board.ships[index].id]
 
         return {"filename":fname, "is_dead":self.board.ships[index].isDead()}

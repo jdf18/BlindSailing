@@ -9,6 +9,7 @@ class Ship:
         self.viewRadius = viewRadius
         self.fireRadius = fireRadius
         self.rot90 = np.array([[0, -1], [1, 0]])
+        self.rot270 = np.array([[0, 1], [-1, 0]])
         self.team = team
         self.hitSections = [False for i in range(length)]
         self.id = id
@@ -21,9 +22,12 @@ class Ship:
     
     def rotate(self, times: int):
         centre = self.getCentre()
-        for i in range(times):
+        if times == 1:
             self.front = np.matmul(self.rot90, (self.front - centre)) + centre
-        self.facing = np.matmul(self.rot90, self.facing)
+            self.facing = np.matmul(self.rot90, self.facing)
+        if times == 3:
+            self.front = np.matmul(self.rot270, (self.front - centre)) + centre
+            self.facing = np.matmul(self.rot270, self.facing)
     
     def getCoords(self) -> np.array:
         coords = []

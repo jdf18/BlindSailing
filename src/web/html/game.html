@@ -18,9 +18,9 @@
         <div class="controls-container">
             <h2>Controls</h2>
             <p>
-                <button>&#8592</button>
-                <img class="pixel" src="{{ url_for('static', filename='/img/airCarrier-0.png')}}" height="64" width="auto">
-                <button>&#8594</button>
+                <button onclick="switch_current_ship(true)">&#8592</button>
+                <img id="previewship" class="pixel" src="{{ url_for('static', filename='/img/airCarrier-0.png')}}" height="64" width="auto">
+                <button onclick="switch_current_ship(false)">&#8594</button>
             </p>
             <p>
                 <button onclick="on_button_move()">Move</button>
