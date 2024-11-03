@@ -1,5 +1,5 @@
 from os import path
-from flask import Flask, abort, jsonify, render_template, request, redirect, send_file, url_for, session
+from flask import Flask, abort, jsonify, render_template, request, redirect, send_file, url_for, session, send_from_directory
 import numpy as np
 from user_manager import UserManager, User, LoginStatus
 from game_server import GamesServer, GamesManager
@@ -451,6 +451,11 @@ def create_app() -> Flask:
             possible_attacks.append((item[0], item[1]))
 
         return jsonify(possible_attacks), 200 
+    
+
+    @app.route("/<path:filename>")
+    def download_asset(filename):
+        return send_from_directory(app.config(['STATIC_FOLDER'], filename, as_attachment=False))
 
 
     
