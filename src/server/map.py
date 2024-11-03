@@ -29,27 +29,33 @@ class Board:
     def updateGrid(self, pos: np.array, val: int):
         self.grid[pos[0]][pos[1]] = val
 
-    def moveShip(self, index: int, dist: int):
+    def canMoveShip(self, index: int, dist: int) -> bool:
         if self.ships[index].isDead():
-            raise ValueError("Cannot move a dead ship")
+            return False
         shipFacing = self.ships[index].facing
         coords = self.ships[index].getCoords()
         for i in range(len(coords)):
             coord = coords[i] + shipFacing * dist
             if coord[0] >= self.gridSize[0] or coord[1] >= self.gridSize[1]:
-                raise ValueError("Cannot move a ship beyond the bounds of the board")
+                return False
             val = self.indexGrid(coord)
             if val != None and val != index:
-                raise ValueError("Cannot move ship into a position which contains another ship.")
+                return 
+        return True
+
+    def moveShip(self, index: int, dist: int):
+        if not self.canMoveShip:
+            raise ValueError("Cannot make that move.")
+        coords = self.ships[index].getCoords()
         self.ships[index].step(dist)
         for i in range(len(coords)):
             self.updateGrid(coords[1], None)
         for coord in self.ships[index].getCoords():
             self.updateGrid(coord, index)
     
-    def rotateShip(self, index: int, times: int):
+    def canRotateShip(self, index: int, times: int) -> bool:
         if self.ships[index].isDead():
-            raise ValueError("Cannot rotate a dead ship")
+            return False
         shipCentre = self.ships[index].getCentre()
         coords = self.ships[index].getCoords()
         for i in range(times):
@@ -57,12 +63,18 @@ class Board:
                 coords[x] = np.matmul(ROT90, (coords[x] - shipCentre)) + shipCentre
         for coord in coords:
             if coord[0] >= self.gridSize[0] or coord[1] >= self.gridSize[1]:
-                raise ValueError("Cannot rotate this ship as it would be over the edge of the board.")
+                return False
         for coord in coords:
             val = self.indexGrid(coord)
             if val != None and val != index:
-                raise ValueError("Cannot rotate this ship as it would be overlapping another ship.")
-        for coord in self.ships[index].getCoords():
+                return False
+        return True
+    
+    def rotateShip(self, index: int, times: int):
+        if not self.canRotateShip(index, times):
+            raise ValueError("Cannot rotate ship.")
+        coords = self.ships[index].getCoords()
+        for coord in coords:
             self.updateGrid(coord, None)
         self.ships[index].rotate(times)
         for coord in coords:
@@ -76,7 +88,7 @@ class Board:
                 for c in ships[ind].getCoords():
                     self.updateGrid(c, None)
             return (True, ind, ships[ind].isDead())
-        return False
+        return (False, None, None)
     
     def shootFromShip(self, index: int, coord: np.array):
         ship = self.ships[index]
@@ -89,6 +101,17 @@ class Board:
     def getDist(self, coord1: np.array, coord2: np.array) -> float:
         diff = coord2 - coord1
         return math.sqrt(diff[0] ** 2 + diff[1] ** 2)
+    
+    def getFirableTiles(self, index: int) -> list[np.array]:
+        ship = self.ships[index]
+        centre = ship.getCentre()
+        firableTiles = []
+        for y in range(self.gridSize[1]):
+            for x in range(self.gridSize[0]):
+                arr = np.array([x, y])
+                if self.getDist(arr, centre) <= ship.fireRadius:
+                    firableTiles.append(arr)
+        return firableTiles
 
     def getVisibleTiles(self, index: int) -> tuple[list[np.array], list[np.array]]:
         ship = self.ships[index]
@@ -189,3 +212,6 @@ class Game:
                 if not ship.isDead():
                     return False
         return True
+    
+    def getGridSize(self):
+        return self.board.gridSize
