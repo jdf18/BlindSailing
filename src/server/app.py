@@ -324,17 +324,17 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
         
-        visible_friendly_ships: list[dict[
-            'filename':str,
-            'position':tuple[int, int],
-            'facing':int]] = []
+        visible_friendly_ships: list[tuple[
+            str,
+            tuple[int, int],
+            int]] = []
         visibleList = game.getVisibleFriendlyShips(user_uid)
         for ind in visibleList:
-            toAdd = {
-                'filename':game.playerShipDict[game.board.ships[ind].id],
-                'position':(int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
-                'facing':game.board.ships[ind].getFacingasValue()
-            }
+            toAdd = (
+                game.playerShipDict[game.board.ships[ind].id],
+                (int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
+                game.board.ships[ind].getFacingasValue()
+            )
             visible_friendly_ships.append(toAdd)
         return jsonify(visible_friendly_ships), 200 
     
@@ -349,17 +349,17 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
         
-        visible_enemy_ships: list[dict[
-            'filename':str,
-            'position':tuple[int, int],
-            'facing':int]] = []
+        visible_enemy_ships: list[tuple[
+            str,
+            tuple[int, int],
+            int]] = []
 
         for ind in game.getAllVisibleEnemyShips(user_uid):
-            toAdd = {
-                'filename':game.enemyShipDict[game.board.ships[ind].id],
-                'position':(int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
-                'facing':game.board.ships[ind].getFacingasValue()
-            }
+            toAdd = (
+                game.enemyShipDict[game.board.ships[ind].id],
+                (int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
+                game.board.ships[ind].getFacingasValue()
+            )
             visible_enemy_ships.append(toAdd)
         return jsonify(visible_enemy_ships), 200 
     
