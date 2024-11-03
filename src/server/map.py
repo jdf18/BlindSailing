@@ -177,10 +177,10 @@ class Game:
         self.board = Board(np.array([50, 30]))
         self.p1Ships = []
         self.p2Ships = []
-        self.p1Ships.append(self.board.addShip(ships.AirCarrier(np.array([1, 8]), np.array([1, 0]), p1ID)))
-        self.p1Ships.append(self.board.addShip(ships.Battleship(np.array([1, 6]), np.array([1, 0]), p1ID)))
-        self.p1Ships.append(self.board.addShip(ships.Cruiser(np.array([1, 4]), np.array([1, 0]), p1ID)))
-        self.p1Ships.append(self.board.addShip(ships.Submarine(np.array([1, 2]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.AirCarrier(np.array([4, 8]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Battleship(np.array([3, 6]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Cruiser(np.array([2, 4]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Submarine(np.array([2, 2]), np.array([1, 0]), p1ID)))
         self.p1Ships.append(self.board.addShip(ships.Destroyer(np.array([1, 0]), np.array([1, 0]), p1ID)))
         self.p2Ships.append(self.board.addShip(ships.AirCarrier(np.array([10, 8]), np.array([-1, 0]), None)))
         self.p2Ships.append(self.board.addShip(ships.Battleship(np.array([10, 6]), np.array([-1, 0]), None)))
