@@ -41,15 +41,14 @@ class Ship:
         return all(self.hitSections)
     
     def getFacingasValue(self):
-        match self.facing:
-            case np.array([-1, 0]):
-                return 0
-            case np.array([0, -1]):
-                return 1
-            case np.array([1, 0]):
-                return 2
-            case np.array([0, 1]):
-                return 3
+        if self.facing == np.array([-1, 0]):
+            return 0
+        if self.facing == np.array([0, -1]):
+            return 1
+        if self.facing == np.array([1, 0]):
+            return 2
+        if self.facing == np.array([0, 1]):
+            return 3
         
     def getDamagedCoords(self):
         coords = self.getCoords()

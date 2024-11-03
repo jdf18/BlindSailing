@@ -310,7 +310,7 @@ def create_app() -> Flask:
             ))[0]
         game = server.games_manager.game_servers[lobby.game_index]
         
-        grid_size: list = [game.getGridSize()[0], game.getGridSize()[1]]
+        grid_size: list = [int(game.getGridSize()[0]), int(game.getGridSize()[1])]
         return jsonify(grid_size), 200 
     
     @app.route("/api/v1/graphics_get_visible_friendly_ships", methods=["POST"])
@@ -332,7 +332,7 @@ def create_app() -> Flask:
         for ind in visibleList:
             toAdd = {
                 'filename':game.playerShipDict[game.board.ships[ind].id],
-                'position':(game.board.ships[ind].front[0], game.board.ships[ind].front[1]),
+                'position':(int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
                 'facing':game.board.ships[ind].getFacingasValue()
             }
             visible_friendly_ships.append(toAdd)
@@ -357,7 +357,7 @@ def create_app() -> Flask:
         for ind in game.getAllVisibleEnemyShips(user_uid):
             toAdd = {
                 'filename':game.enemyShipDict[game.board.ships[ind].id],
-                'position':(game.board.ships[ind].front[0], game.board.ships[ind].front[1]),
+                'position':(int(game.board.ships[ind].front[0]), int(game.board.ships[ind].front[1])),
                 'facing':game.board.ships[ind].getFacingasValue()
             }
             visible_enemy_ships.append(toAdd)
@@ -384,7 +384,7 @@ def create_app() -> Flask:
         for ind in game.getAllVisibleEnemyShips(user_uid):
             damagedCoords = [coords for coords in game.board.ships[ind].getDamagedCoords() if coords in visibleTiles]
             for coords in damagedCoords:
-                damaged_squares.append((coords[0], coords[1]))
+                damaged_squares.append((int(coords[0]), int(coords[1])))
 
         return jsonify(damaged_squares), 200 
     
@@ -403,7 +403,7 @@ def create_app() -> Flask:
 
         hiddenCells = game.getAllHiddenTiles(user_uid)
         for cell in hiddenCells:
-            hidden_cells.append((cell[0], cell[1]))
+            hidden_cells.append((int(cell[0]), int(cell[1])))
 
         return jsonify(hidden_cells), 200 
     
@@ -422,7 +422,7 @@ def create_app() -> Flask:
 
         visibleCells = game.getAllVisibleTiles(user_uid)
         for cell in visibleCells:
-            visible_cells.append((cell[0], cell[1]))
+            visible_cells.append((int(cell[0]), int(cell[1])))
 
         return jsonify(visible_cells), 200 
     
