@@ -335,3 +335,6 @@ class Game:
     def getFirableTiles(self, index: int) -> list[np.array]:
         return self.board.getFirableTiles(index)
     
+    def isPlayerOne(self, playerID: int) -> bool:
+        return playerID == self.players[0]
+    

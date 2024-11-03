@@ -82,6 +82,25 @@ async function api_is_my_turn(){
     }
 }
 
+async function api_is_player_one(){
+    // Returns: Boolean success
+
+    try{
+        const response = await fetch('/api/v1/game_is_player_one',{
+            method: 'POST',
+            headers:{}
+        });
+        if (!response.ok){
+            throw new Error('Error when getting whether player one');
+        }
+        const data = await response.json();
+        const is_player_one = data['is_player_one'];
+        return is_player_one;
+    } catch(error){
+        console.error("Error:", error.message);
+    }
+}
+
 async function api_move(ship_index, count){
     // Returns: Boolean success
 
