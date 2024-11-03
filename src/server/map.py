@@ -167,7 +167,7 @@ class Board:
         return invisible
 
 
-    def getVisibleTilesTuple(self, index: int) -> tuple[map[tuple[int, int]], map[tuple[int, int]]]:
+    def getVisibleTilesTuple(self, index: int) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
         visibleTiles, invisibleTiles = self.getVisibleTiles(index)
         return map(tuple, visibleTiles), map(tuple, invisibleTiles)
 
@@ -217,6 +217,18 @@ class Game:
         self.turn = playerID
         self.movedShips = []
 
+    def changeTurnifFinished(self, playerID):
+        
+        if playerID == self.players[0]:
+            if not len(self.movedShips) == len(self.p1Ships):
+                return
+            self.startTurn(self.players[1])
+        if playerID == self.players[1]:
+            if not len(self.movedShips) == len(self.p2Ships):
+                return
+            self.startTurn(self.players[0])
+
+
     def getUnmovedShips(self, playerID):
         if playerID == self.players[0]:
             return [ind for ind in self.p1Ships if ind not in self.movedShips]
@@ -244,7 +256,7 @@ class Game:
         return self.board.getVisibleEnemyShips(index)
     def getVisibleFriendlyShips(self, team: int) -> list[int]:
         return self.board.getVisibleFriendlyShips(team)
-    def getVisibleTilesTuple(self, index: int) -> tuple[map[tuple[int, int]], map[tuple[int, int]]]:
+    def getVisibleTilesTuple(self, index: int) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
         return self.board.getVisibleTilesTuple(index)
     
     def hasWon(self, team):
