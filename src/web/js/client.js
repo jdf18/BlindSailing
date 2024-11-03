@@ -326,4 +326,4 @@ function coord_to_pos(coord, rotation) {
     };
 };
 
-render()
+await render()
