@@ -68,31 +68,31 @@ function render() {
     const ctx = canvas.getContext("2d");
     define_images();
 
-    const visibleCells = get_visible_cells();
+    const visibleCells = api_get_visible_cells();
     for (let i=0; i<visibleCells.length; i++) {
         let coord = coord_to_pos(visibleCells[i], 0);
         ctx.drawImage(sea, coord[0], coord[1]);
     };
 
-    const enemyShips = get_visible_enemy_ships();
+    const enemyShips = api_get_visible_enemy_ships();
     for (let i=0; i<enemyShips.length; i++) {
         let coord = coord_to_pos(enemyShips[i][1], enemyShips[i][2]);
         ctx.drawImage(get_img(enemyShips[i][0]), coord[0], coord[1]);
     };
 
-    const hiddenCells = get_hidden_cells();
+    const hiddenCells = api_get_hidden_cells();
     for (let i=0; i<hiddenCells.length; i++) {
         let coord = coord_to_pos(hiddenCells[i], 0);
         ctx.drawImage(fog, coord[0], coord[1]);
     };
 
-    const friendlyShips = get_visible_friendly_ships();
+    const friendlyShips = api_get_visible_friendly_ships();
     for (let i=0; i<friendlyShips.length; i++) {
         let coord = coord_to_pos(friendlyShips[i][1], friendlyShips[i][2]);
         ctx.drawImage(get_img(friendlyShips[i][0]), coord[0], coord[1]);
     };
 
-    const damagedCells = get_damaged_squares();
+    const damagedCells = api_get_damaged_squares();
     for (let i=0; i<damagedCells.length; i++) {
         let coord = coord_to_pos(damagedCells[i], 0);
         ctx.drawImage(explosion, coord[0], coord[1]);
