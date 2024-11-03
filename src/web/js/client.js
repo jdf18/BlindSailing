@@ -93,12 +93,12 @@ function get_img(filename) {
 
 function coords_to_pos(coord, rotation) {
     if (rotation == 0) {
-        return [16*coord[0], 16*coord[1]+1];
+        return [16*coord[0]+1, 16*coord[1]+2];
     } else if (rotation == 1) {
-        return [16*coord[0], 16*coord[1]];
-    } else if (rotation == 2) {
-        return [16*coord[0]+1, 16*coord[1]];
-    } else {
         return [16*coord[0]+1, 16*coord[1]+1];
+    } else if (rotation == 2) {
+        return [16*coord[0]+2, 16*coord[1]+1];
+    } else {
+        return [16*coord[0]+2, 16*coord[1]+2];
     };
 };
