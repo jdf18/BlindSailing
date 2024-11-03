@@ -286,8 +286,8 @@ def create_app() -> Flask:
 
         return jsonify({'is_winner': is_player_winner}), 200 
     
-    @app.route("/api/v1/game_get_availiable_ships", methods=["POST"])
-    def api_game_get_availiable_ships():
+    @app.route("/api/v1/game_get_available_ships", methods=["POST"])
+    def api_game_get_available_ships():
         require_connection()
         user_uid = session['login_uid']
         user: User = server.user_manager.users[user_uid]

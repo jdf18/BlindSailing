@@ -369,3 +369,5 @@ function switch_current_ship(left) {
     let x = api_get_available_ships();
     currently_selected_ship %= x.length;
 }
+
+poll_while_client_turn();
