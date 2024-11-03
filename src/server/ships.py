@@ -41,19 +41,21 @@ class Ship:
         return all(self.hitSections)
     
     def getFacingasValue(self):
-        match self.facing:
-            case np.array([-1, 0]):
-                return 0
-            case np.array([0, -1]):
-                return 1
-            case np.array([1, 0]):
-                return 2
-            case np.array([0, 1]):
-                return 3
+        if np.array_equal(self.facing, np.array([-1, 0])):
+            return 0
+        if np.array_equal(self.facing, np.array([0, -1])):
+            return 1
+        if np.array_equal(self.facing, np.array([1, 0])):
+            return 2
+        if np.array_equal(self.facing, np.array([0, 1])):
+            return 3
         
     def getDamagedCoords(self):
         coords = self.getCoords()
         return [coords[i] for i in range(len(coords)) if self.hitSections[i]]
+    
+    def getTopLeft(self):
+        return max(self.getCoords(), key=lambda x: int(x[0]) + int(x[1]))
 
 
 # 5-long

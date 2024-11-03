@@ -124,9 +124,9 @@ class Board:
             for x in range(self.gridSize[0]):
                 arr = np.array([x, y])
                 if self.getDist(arr, centre) <= ship.viewRadius:
-                    visibleTiles.append(arr)
+                    visibleTiles.append(tuple(arr))
                 else:
-                    invisibleTiles.append(arr)
+                    invisibleTiles.append(tuple(arr))
         return visibleTiles, invisibleTiles
 
     def getVisibleEnemyShips(self, index: int) -> list[int]:
@@ -167,9 +167,9 @@ class Board:
         return invisible
 
 
-    def getVisibleTilesTuple(self, index: int) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
+    def getVisibleTilesTuple(self, index: int) -> tuple[tuple[tuple[int, int]], tuple[tuple[int, int]]]:
         visibleTiles, invisibleTiles = self.getVisibleTiles(index)
-        return map(tuple, visibleTiles), map(tuple, invisibleTiles)
+        return (tuple(tile) for tile in visibleTiles), (tuple(tile) for tile in invisibleTiles)
 
 
 class Game:
@@ -177,16 +177,16 @@ class Game:
         self.board = Board(np.array([50, 30]))
         self.p1Ships = []
         self.p2Ships = []
-        self.p1Ships.append(self.board.addShip(ships.AirCarrier(np.array([4, 28]), np.array([1, 0]), p1ID)))
-        self.p1Ships.append(self.board.addShip(ships.Battleship(np.array([3, 26]), np.array([1, 0]), p1ID)))
-        self.p1Ships.append(self.board.addShip(ships.Cruiser(np.array([2, 24]), np.array([1, 0]), p1ID)))
-        self.p1Ships.append(self.board.addShip(ships.Submarine(np.array([2, 22]), np.array([1, 0]), p1ID)))
-        self.p1Ships.append(self.board.addShip(ships.Destroyer(np.array([1, 20]), np.array([1, 0]), p1ID)))
-        self.p2Ships.append(self.board.addShip(ships.AirCarrier(np.array([25, 28]), np.array([-1, 0]), None)))
-        self.p2Ships.append(self.board.addShip(ships.Battleship(np.array([26, 26]), np.array([-1, 0]), None)))
-        self.p2Ships.append(self.board.addShip(ships.Cruiser(np.array([27, 24]), np.array([-1, 0]), None)))
-        self.p2Ships.append(self.board.addShip(ships.Submarine(np.array([27, 22]), np.array([-1, 0]), None)))
-        self.p2Ships.append(self.board.addShip(ships.Destroyer(np.array([28, 20]), np.array([-1, 0]), None)))
+        self.p1Ships.append(self.board.addShip(ships.AirCarrier(np.array([4, 8]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Battleship(np.array([3, 6]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Cruiser(np.array([2, 4]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Submarine(np.array([2, 2]), np.array([1, 0]), p1ID)))
+        self.p1Ships.append(self.board.addShip(ships.Destroyer(np.array([1, 0]), np.array([1, 0]), p1ID)))
+        self.p2Ships.append(self.board.addShip(ships.AirCarrier(np.array([10, 8]), np.array([-1, 0]), None)))
+        self.p2Ships.append(self.board.addShip(ships.Battleship(np.array([10, 6]), np.array([-1, 0]), None)))
+        self.p2Ships.append(self.board.addShip(ships.Cruiser(np.array([10, 4]), np.array([-1, 0]), None)))
+        self.p2Ships.append(self.board.addShip(ships.Submarine(np.array([10, 2]), np.array([-1, 0]), None)))
+        self.p2Ships.append(self.board.addShip(ships.Destroyer(np.array([10, 0]), np.array([-1, 0]), None)))
         self.turn = p1ID
         self.players = [p1ID, None]
         self.movedShips = []
@@ -217,13 +217,14 @@ class Game:
         self.turn = playerID
         self.movedShips = []
 
-    def changeTurnifFinished(self, playerID):
-        
-        if playerID == self.players[0]:
+    def changeTurnifFinished(self):
+        if self.turn == self.players[0]:
+            no_of_alive_ships = len(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p1Ships)))
             if not len(self.movedShips) == len(self.p1Ships):
                 return
             self.startTurn(self.players[1])
-        if playerID == self.players[1]:
+        if self.turn == self.players[1]:
+            no_of_alive_ships = len(filter(lambda x: not x.isDead(), (self.board.ships[x] for x in self.p2Ships)))
             if not len(self.movedShips) == len(self.p2Ships):
                 return
             self.startTurn(self.players[0])
@@ -293,12 +294,12 @@ class Game:
         if playerID == self.players[0]:
             totalSet = set()
             for ind in self.p1Ships:
-                totalSet += set(self.getVisibleEnemyShips(ind))
+                totalSet |= set(tuple(self.getVisibleEnemyShips(ind)))
             return totalSet
         if playerID == self.players[1]:
             totalSet = set()
             for ind in self.p2Ships:
-                totalSet += set(self.getVisibleEnemyShips(ind))
+                totalSet |= set(tuple(self.getVisibleEnemyShips(ind)))
             return totalSet
         raise ValueError("PlayerID does not correspond to a player.")
     
@@ -306,23 +307,28 @@ class Game:
         allTiles = set()
         if playerID == self.players[0]:
             for ind in self.p1Ships:
-                allTiles += set(self.getVisibleTiles(ind)[0])
+                allTiles |= set(self.getVisibleTilesTuple(ind)[0])
             return allTiles
         if playerID == self.players[1]:
             for ind in self.p2Ships:
-                allTiles += set(self.getVisibleTiles(ind)[0])
+                allTiles |= set(self.getVisibleTilesTuple(ind)[0])
             return allTiles
         raise ValueError("PlayerID does not correspond to a player.")
     
     def getAllHiddenTiles(self, playerID: int) -> set:
-        allTiles = set()
         if playerID == self.players[0]:
-            for ind in self.p1Ships:
-                allTiles += set(self.getVisibleTiles(ind)[1])
+            if len(self.p1Ships) == 0:
+                return set()
+            allTiles = set(self.getVisibleTilesTuple(self.p1Ships[0])[1])
+            for ind in self.p1Ships[1:]:
+                allTiles &= set(self.getVisibleTilesTuple(ind)[1])
             return allTiles
         if playerID == self.players[1]:
-            for ind in self.p2Ships:
-                allTiles += set(self.getVisibleTiles(ind)[1])
+            if len(self.p2Ships) == 0:
+                return set()
+            allTiles = set(self.getVisibleTilesTuple(self.p2Ships[0])[1])
+            for ind in self.p2Ships[1:]:
+                allTiles &= set(self.getVisibleTilesTuple(ind)[1])
             return allTiles
         raise ValueError("PlayerID does not correspond to a player.")
     
